@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vehicle Info</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .form-container {
+      background-color: rgba(0,0,0,0.5);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    input, select, button {
+      padding: 12px;
+      margin: 10px 0;
+      width: 100%;
+      max-width: 300px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #00bcd4;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #0097a7;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Enter Vehicle Information</h2>
+    <input type="text" id="carId" placeholder="Enter Vehicle Number (HR 35 V 8754)" required>
+    <select id="vehicleType">
+      <option value="">Select Vehicle Type</option>
+      <option value="car">Car</option>
+      <option value="bus">Bus</option>
+      <option value="truck">Truck</option>
+      <option value="bike">Bike</option>
+    </select>
+    <button onclick="submitVehicleInfo()">Submit</button>
+  </div>
+
+  <script>
+    function submitVehicleInfo() {
+      const carId = document.getElementById('carId').value.trim();
+      const vehicleType = document.getElementById('vehicleType').value;
+
+      if (!carId || !vehicleType) {
+        alert("Please enter all fields.");
+        return;
+      }
+
+      localStorage.setItem('carId', carId);
+      localStorage.setItem('vehicleType', vehicleType);
+
+      window.location.href = "./index.html";
+    }
+  </script>
+</body>
+</html>

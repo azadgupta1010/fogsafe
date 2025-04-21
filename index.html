@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fog Road Safety</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <script src="firebaseConfig.js"></script>
+  <!-- Google Maps -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCD0r0BlLuQM7E1gmRj_nWQqnbBV3Et5mg"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #001f3f;
+      color: #fff;
+    }
+    h1 {
+      text-align: center;
+      padding: 15px;
+    }
+    #map {
+      height: 80vh;
+      width: 100%;
+    }
+    #alertBox {
+      background: red;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      display: none;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>🚗 Fog Road Safety System</h1>
+  <div id="map"></div>
+  <div id="alertBox">⚠️ WARNING: Another car is within 1 KM!</div>
+
+  <script>
+    const carId = localStorage.getItem('carId') || prompt("Enter your car ID");
+    const vehicleType = localStorage.getItem('vehicleType') || "car";
+
+    // Initialize Firebase (firebaseConfig.js must define and initialize firebase)
+    const db = firebase.database();
+
+    let map, myMarker;
+
+    function initMap() {
+      navigator.geolocation.getCurrentPosition(pos => {
+        const myLocation = {
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude
+        };
+
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: myLocation,
+          zoom: 14
+        });
+
+        myMarker = new google.maps.Marker({
+          position: myLocation,
+          map,
+          title: carId,
+          icon: `https://maps.google.com/mapfiles/kml/shapes/${vehicleType}.png`
+        });
+
+        updateLocation(myLocation);
+        watchNearbyCars(myLocation);
+      });
+    }
+
+    function updateLocation(location) {
+      db.ref(`locations/${carId}`).set(location);
+    }
+
+    function watchNearbyCars(myLocation) {
+      db.ref('locations').on('value', snapshot => {
+        let nearby = false;
+        snapshot.forEach(child => {
+          if (child.key !== carId) {
+            const loc = child.val();
+            const distance = getDistance(myLocation, loc);
+            if (distance < 1) nearby = true;
+          }
+        });
+        document.getElementById('alertBox').style.display = nearby ? 'block' : 'none';
+      });
+    }
+
+    function getDistance(loc1, loc2) {
+      const toRad = x => x * Math.PI / 180;
+      const R = 6371;
+      const dLat = toRad(loc2.lat - loc1.lat);
+      const dLon = toRad(loc2.lng - loc1.lng);
+      const a = Math.sin(dLat/2) ** 2 +
+                Math.cos(toRad(loc1.lat)) * Math.cos(toRad(loc2.lat)) *
+                Math.sin(dLon/2) ** 2;
+      return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+    }
+
+    window.onload = initMap;
+  </script>
+</body>
+</html>
