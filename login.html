@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #3a6073);
+      background-size: 400% 400%;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      animation: gradientShift 15s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .form-container {
+      background: rgba(0,0,0,0.3);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      text-align: center;
+      transform: translateY(0);
+      animation: fadeIn 1s ease, float 3s ease-in-out infinite;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    h2 {
+      margin-bottom: 30px;
+      font-size: 2em;
+      text-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+
+    input {
+      padding: 15px;
+      margin: 15px 0;
+      width: 100%;
+      max-width: 300px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      background: rgba(255,255,255,0.2);
+      box-shadow: 0 0 15px rgba(0,188,212,0.5);
+    }
+
+    input::placeholder {
+      color: rgba(255,255,255,0.7);
+    }
+
+    button {
+      padding: 15px 30px;
+      margin: 20px 0;
+      width: 100%;
+      max-width: 300px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      background: linear-gradient(45deg, #00bcd4, #0097a7);
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,188,212,0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: rgba(255,255,255,0.1);
+      transform: rotate(45deg);
+      transition: all 0.5s;
+    }
+
+    button:hover::after {
+      left: 120%;
+    }
+
+    .spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    a {
+      color: #00bcd4;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    a:hover {
+      text-shadow: 0 0 10px rgba(0,188,212,0.5);
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(10px); }
+      75% { transform: translateX(-10px); }
+    }
+  </style>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="firebaseConfig.js"></script>
+</head>
+<body>
+  <div class="form-container">
+    <h2>🔒 Login</h2>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button onclick="login()">
+      <span class="button-text">Login</span>
+      <div class="spinner"></div>
+    </button>
+    <p>Don't have an account? <a href="register.html">Register here</a></p>
+  </div>
+
+  <script>
+    function login() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const button = document.querySelector('button');
+      const spinner = document.querySelector('.spinner');
+      const buttonText = document.querySelector('.button-text');
+
+      // Show loading spinner
+      button.disabled = true;
+      buttonText.style.display = 'none';
+      spinner.style.display = 'inline-block';
+
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(() => {
+          window.location.href = "vehicleInput.html";
+        })
+        .catch(error => {
+          // Reset button state
+          button.disabled = false;
+          buttonText.style.display = 'inline-block';
+          spinner.style.display = 'none';
+          
+          // Add error animation
+          document.querySelector('.form-container').style.animation = 'shake 0.4s ease';
+          setTimeout(() => {
+            document.querySelector('.form-container').style.animation = '';
+          }, 400);
+          alert(error.message);
+        });
+    }
+
+    // Redirect if already logged in
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) window.location.href = "vehicleInput.html";
+    });
+  </script>
+</body>
+</html>

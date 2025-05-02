@@ -2,108 +2,178 @@
 <html>
 <head>
   <title>Fog Road Safety</title>
-  <link rel="stylesheet" href="style.css">
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-  <script src="firebaseConfig.js"></script>
-  <!-- Google Maps -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCD0r0BlLuQM7E1gmRj_nWQqnbBV3Et5mg"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
-      background-color: #001f3f;
-      color: #fff;
+      font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
+      background: linear-gradient(45deg, #0b1a20, #11232b);
+      color: white;
+      overflow: hidden;
     }
+
     h1 {
       text-align: center;
-      padding: 15px;
+      padding: 25px;
+      margin: 0;
+      background: rgba(0, 0, 0, 0.4);
+      font-size: 2.5em;
+      text-shadow: 0 0 15px rgba(0, 188, 212, 0.5);
+      animation: titleGlow 2s ease-in-out infinite alternate;
     }
+
     #map {
-      height: 80vh;
       width: 100%;
+      height: 85vh;
+      transition: all 0.3s ease;
+      position: relative;
     }
+
     #alertBox {
-      background: red;
+      position: fixed;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 20px 40px;
+      background: linear-gradient(45deg, #ff4444, #cc0000);
       color: white;
-      text-align: center;
-      padding: 15px;
-      display: none;
-      font-size: 18px;
+      border-radius: 15px;
       font-weight: bold;
+      box-shadow: 0 10px 30px rgba(255, 68, 68, 0.3);
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    #alertBox.active {
+      bottom: 30px;
+      opacity: 1;
+    }
+
+    #alertBox::before {
+      content: '⚠️';
+      font-size: 1.5em;
+      animation: pulse 1.5s infinite;
+    }
+
+    .map-overlay {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 15px;
+      border-radius: 10px;
+      z-index: 1000;
+    }
+
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .loader {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #00bcd4;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes titleGlow {
+      from { text-shadow: 0 0 10px rgba(0, 188, 212, 0.5); }
+      to { text-shadow: 0 0 25px rgba(0, 188, 212, 0.8); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .floating-controls {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      display: flex;
+      gap: 15px;
+      z-index: 1000;
+    }
+
+    .control-btn {
+      background: rgba(0, 188, 212, 0.9);
+      padding: 15px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 188, 212, 0.3);
+    }
+
+    .control-btn:hover {
+      transform: translateY(-3px) scale(1.1);
+      box-shadow: 0 8px 25px rgba(0, 188, 212, 0.5);
     }
   </style>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <script src="firebaseConfig.js"></script>
 </head>
 <body>
-  <h1>🚗 Fog Road Safety System</h1>
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loader"></div>
+  </div>
+
+  <h1> Fog Road Safety System</h1>
   <div id="map"></div>
-  <div id="alertBox">⚠️ WARNING: Another car is within 1 KM!</div>
+  <div id="alertBox">⚠️ WARNING: Another vehicle is within 1 KM!</div>
+
+  <div class="floating-controls">
+    <div class="control-btn" onclick="centerMap()">📍</div>
+    <div class="control-btn" onclick="toggleAlerts()">🤍</div>
+  </div>
+
+  <audio id="alertSound" src="beep.mp3" preload="auto"></audio>
+
+  <!-- Load Google Maps API first -->
+  <script async defer 
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCeQ_yL8idO59wW7s8qlmZb3bKkJnjK1D8&callback=initMap&v=weekly">
+  </script>
 
   <script>
-    const carId = localStorage.getItem('carId') || prompt("Enter your car ID");
-    const vehicleType = localStorage.getItem('vehicleType') || "car";
-
-    // Initialize Firebase (firebaseConfig.js must define and initialize firebase)
-    const db = firebase.database();
-
-    let map, myMarker;
-
-    function initMap() {
-      navigator.geolocation.getCurrentPosition(pos => {
-        const myLocation = {
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude
-        };
-
-        map = new google.maps.Map(document.getElementById("map"), {
-          center: myLocation,
-          zoom: 14
-        });
-
-        myMarker = new google.maps.Marker({
-          position: myLocation,
-          map,
-          title: carId,
-          icon: `https://maps.google.com/mapfiles/kml/shapes/${vehicleType}.png`
-        });
-
-        updateLocation(myLocation);
-        watchNearbyCars(myLocation);
-      });
+    // Add these to your existing script.js
+    function centerMap() {
+      if (map && myLocation) {
+        map.panTo(myLocation);
+        // Add animation effect
+        map.setZoom(15);
+        setTimeout(() => map.setZoom(14), 500);
+      }
     }
 
-    function updateLocation(location) {
-      db.ref(`locations/${carId}`).set(location);
+    function toggleAlerts() {
+      const btn = document.querySelector('.control-btn:nth-child(2)');
+      alertsMuted = !alertsMuted;
+      btn.textContent = alertsMuted ? '🔔' : '🔕';
+      btn.style.background = alertsMuted ? '#00C851' : '#00bcd4';
     }
-
-    function watchNearbyCars(myLocation) {
-      db.ref('locations').on('value', snapshot => {
-        let nearby = false;
-        snapshot.forEach(child => {
-          if (child.key !== carId) {
-            const loc = child.val();
-            const distance = getDistance(myLocation, loc);
-            if (distance < 1) nearby = true;
-          }
-        });
-        document.getElementById('alertBox').style.display = nearby ? 'block' : 'none';
-      });
-    }
-
-    function getDistance(loc1, loc2) {
-      const toRad = x => x * Math.PI / 180;
-      const R = 6371;
-      const dLat = toRad(loc2.lat - loc1.lat);
-      const dLon = toRad(loc2.lng - loc1.lng);
-      const a = Math.sin(dLat/2) ** 2 +
-                Math.cos(toRad(loc1.lat)) * Math.cos(toRad(loc2.lat)) *
-                Math.sin(dLon/2) ** 2;
-      return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
-    }
-
-    window.onload = initMap;
   </script>
+  
+  <!-- Then your application script -->
+  <script src="script.js"></script>
 </body>
 </html>

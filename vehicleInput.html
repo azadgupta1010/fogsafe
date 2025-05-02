@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Vehicle Info</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="firebaseConfig.js"></script>
+  <title>Enter Vehicle Info</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-      color: #fff;
+      color: white;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -34,7 +37,6 @@
       background-color: #00bcd4;
       color: white;
       cursor: pointer;
-      transition: background 0.3s;
     }
     button:hover {
       background-color: #0097a7;
@@ -43,8 +45,8 @@
 </head>
 <body>
   <div class="form-container">
-    <h2>Enter Vehicle Information</h2>
-    <input type="text" id="carId" placeholder="Enter Vehicle Number (HR 35 V 8754)" required>
+    <h2>Vehicle Information</h2>
+    <input type="text" id="vehicleNumber" placeholder="Vehicle Number (HR 35 V 8754)" required>
     <select id="vehicleType">
       <option value="">Select Vehicle Type</option>
       <option value="car">Car</option>
@@ -57,19 +59,26 @@
 
   <script>
     function submitVehicleInfo() {
-      const carId = document.getElementById('carId').value.trim();
-      const vehicleType = document.getElementById('vehicleType').value;
+      const number = document.getElementById('vehicleNumber').value.trim();
+      const type = document.getElementById('vehicleType').value;
 
-      if (!carId || !vehicleType) {
-        alert("Please enter all fields.");
+      if (!number || !type) {
+        alert("Please enter all fields!");
         return;
       }
 
-      localStorage.setItem('carId', carId);
-      localStorage.setItem('vehicleType', vehicleType);
+      localStorage.setItem('vehicleNumber', number);
+      localStorage.setItem('vehicleType', type);
 
-      window.location.href = "./index.html";
+      window.location.href = "index.html";
     }
+    
+  </script>
+  <script>
+    // Auth check
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) window.location.href = "login.html";
+    });
   </script>
 </body>
 </html>

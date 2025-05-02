@@ -1,102 +1,188 @@
-const db = firebase.database();
+// Main authentication check wrapper
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) {
+      window.location.href = "login.html";
+      return;
+  }
 
-let myCarId = prompt("Enter your car ID (e.g., car1 or car2)");
-let map, myMarker, otherMarker;
+  // Get vehicle info from localStorage
+  const vehicleNumber = localStorage.getItem('vehicleNumber');
+  const vehicleType = localStorage.getItem('vehicleType');
+  
+  // Check vehicle information exists
+  if (!vehicleNumber || !vehicleType) {
+      window.location.href = "vehicleInput.html";
+      return;
+  }
 
-function initMap(lat, lng) {
-  map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat, lng },
-    zoom: 15,
-    styles: [ // dark style
-      { elementType: 'geometry', stylers: [{ color: '#1d2c4d' }] },
-      { elementType: 'labels.text.stroke', stylers: [{ color: '#1a3646' }] },
-      { elementType: 'labels.text.fill', stylers: [{ color: '#8ec3b9' }] }
-    ]
-  });
+  // Initialize Firebase database
+  const db = firebase.database();
+  let map, myMarker;
+  let myLocation = { lat: 0, lng: 0 };
+  let otherMarkers = {};
 
-  myMarker = new google.maps.Marker({
-    position: { lat, lng },
-    map,
-    label: myCarId,
-    icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-  });
-}
+  // Map initialization function
+  function initMap() {
+    document.getElementById('loadingScreen').style.display = 'flex';
+      navigator.geolocation.getCurrentPosition(pos => {
+          // Success callback
+          myLocation = {
+              lat: pos.coords.latitude,
+              lng: pos.coords.longitude
+          };
 
-function updateLocation(lat, lng) {
-  db.ref("cars/" + myCarId).set({ lat, lng });
-}
+          initializeMap(myLocation);
+          setupMapFeatures();
+          startLocationUpdates();
+  document.getElementById('loadingScreen').style.display = 'none';
+      }, (err) => {
+          // Error callback
+          console.error("Geolocation error:", err);
+          alert("Please enable GPS to continue!");
+          // Fallback to default location (New Delhi)
+          myLocation = { lat: 28.6139, lng: 77.2090 };
+          initializeMap(myLocation);
+          setupMapFeatures();
+      }, { enableHighAccuracy: true });
+  }
 
-function watchOtherCar() {
-  const otherCarId = myCarId === "car1" ? "car2" : "car1";
+  function initializeMap(location) {
+      map = new google.maps.Map(document.getElementById("map"), {
+          center: location,
+          zoom: 14,
+          mapTypeControl: true,
+          streetViewControl: false,
+          styles: [
+              { elementType: 'geometry', stylers: [{ color: '#1d2c4d' }] },
+              { elementType: 'labels.text.stroke', stylers: [{ color: '#1a3646' }] },
+              { elementType: 'labels.text.fill', stylers: [{ color: '#8ec3b9' }] }
+          ]
+      });
 
-  db.ref("cars/" + otherCarId).on("value", (snapshot) => {
-    const data = snapshot.val();
-    if (data) {
-      const otherLat = data.lat;
-      const otherLng = data.lng;
+      myMarker = new google.maps.Marker({
+          position: location,
+          map: map,
+          title: vehicleNumber,
+          icon: getVehicleIcon(vehicleType)
+      });
+  }
 
-      if (otherMarker) {
-        otherMarker.setPosition({ lat: otherLat, lng: otherLng });
+  function setupMapFeatures() {
+      updateLocation();
+      watchNearbyCars();
+  }
+
+  function startLocationUpdates() {
+      navigator.geolocation.watchPosition(position => {
+          myLocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+          };
+          if (myMarker) myMarker.setPosition(myLocation);
+          map.setCenter(myLocation);
+          updateLocation();
+      }, error => {
+          console.error("Error getting location updates:", error);
+      }, { enableHighAccuracy: true, maximumAge: 0 });
+  }
+
+  // Helper functions
+  const getVehicleIcon = (type) => {
+      const icons = {
+          car: 'https://maps.google.com/mapfiles/kml/shapes/car.png',
+          bus: 'https://maps.google.com/mapfiles/kml/shapes/bus.png',
+          truck: 'https://maps.google.com/mapfiles/kml/shapes/truck.png',
+          bike: 'https://maps.google.com/mapfiles/kml/shapes/cycling.png'
+      };
+      return icons[type] || icons.car;
+  };
+
+  const updateLocation = () => {
+      db.ref(`vehicles/${vehicleNumber}`).set({
+          location: myLocation,
+          vehicleType: vehicleType,
+          timestamp: firebase.database.ServerValue.TIMESTAMP
+      });
+  };
+
+  const watchNearbyCars = () => {
+      db.ref('vehicles').on('value', snapshot => {
+          let nearby = false;
+          const now = Date.now();
+          
+          snapshot.forEach(child => {
+              if (child.key !== vehicleNumber) {
+                  const data = child.val();
+                  if (now - data.timestamp > 120000) {
+                      db.ref(`vehicles/${child.key}`).remove();
+                      return;
+                  }
+
+                  const distance = getDistance(myLocation, data.location);
+                  updateVehicleMarker(child.key, data, distance);
+                  
+                  if (distance < 1) nearby = true;
+              }
+          });
+
+          updateAlertSystem(nearby);
+          cleanupOldMarkers(snapshot);
+      });
+  };
+
+  const updateVehicleMarker = (vehicleId, data, distance) => {
+      if (!otherMarkers[vehicleId]) {
+          otherMarkers[vehicleId] = new google.maps.Marker({
+              position: data.location,
+              map: map,
+              title: `${vehicleId} (${data.vehicleType})`,
+              icon: getVehicleIcon(data.vehicleType)
+          });
       } else {
-        otherMarker = new google.maps.Marker({
-          position: { lat: otherLat, lng: otherLng },
-          map,
-          label: otherCarId,
-          icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
-        });
+          otherMarkers[vehicleId].setPosition(data.location);
       }
+      otherMarkers[vehicleId].setVisible(distance < 2);
+  };
 
-      checkDistance(otherLat, otherLng);
-    }
-  });
-}
+  const cleanupOldMarkers = (snapshot) => {
+      Object.keys(otherMarkers).forEach(vehicleId => {
+          if (!snapshot.hasChild(vehicleId)) {
+              otherMarkers[vehicleId].setMap(null);
+              delete otherMarkers[vehicleId];
+          }
+      });
+  };
 
-function checkDistance(lat2, lng2) {
-  const lat1 = myMarker.getPosition().lat();
-  const lng1 = myMarker.getPosition().lng();
+  const updateAlertSystem = (nearby) => {
+      const alertBox = document.getElementById('alertBox');
+      const alertSound = document.getElementById('alertSound');
+      
+      if (nearby) {
+          alertBox.style.display = 'block';
+          if (alertSound.paused) alertSound.play();
+      } else {
+          alertBox.style.display = 'none';
+          alertSound.pause();
+          alertSound.currentTime = 0;
+      }
+  };
 
-  const R = 6371;
-  const dLat = deg2rad(lat2 - lat1);
-  const dLng = deg2rad(lng2 - lng1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-    Math.sin(dLng / 2) * Math.sin(dLng / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const d = R * c;
+  const getDistance = (loc1, loc2) => {
+      const toRad = x => x * Math.PI / 180;
+      const R = 6371; // Earth's radius in KM
+      const dLat = toRad(loc2.lat - loc1.lat);
+      const dLon = toRad(loc2.lng - loc1.lng);
+      const a = Math.sin(dLat/2) ** 2 +
+              Math.cos(toRad(loc1.lat)) * Math.cos(toRad(loc2.lat)) *
+              Math.sin(dLon/2) ** 2;
+      return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+  };
 
-  const alertBox = document.getElementById("alertBox");
-  if (d < 1) {
-    alertBox.style.display = "block";
-  } else {
-    alertBox.style.display = "none";
-  }
-}
+  // Initialize the map after all checks
+  initMap();
+});
 
-function deg2rad(deg) {
-  return deg * (Math.PI / 180);
-}
-
-navigator.geolocation.watchPosition(
-  (position) => {
-    const lat = position.coords.latitude;
-    const lng = position.coords.longitude;
-
-    if (!map) {
-      initMap(lat, lng);
-    }
-
-    myMarker.setPosition({ lat, lng });
-    updateLocation(lat, lng);
-  },
-  (error) => {
-    alert("Please allow location access.");
-  },
-  {
-    enableHighAccuracy: true,
-    timeout: 5000,
-    maximumAge: 0,
-  }
-);
-
-watchOtherCar();
+// Initialize the application when window loads
+window.onload = () => {
+  // This will trigger the auth check and subsequent initialization
+};

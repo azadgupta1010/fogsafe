@@ -1,29 +1,49 @@
 body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #0b0c2a;
-    color: white;
-    text-align: center;
-  }
-  
-  h1 {
-    padding: 20px;
-    background-color: #1e3a8a;
-    margin: 0;
-  }
-  
-  #map {
-    width: 100%;
-    height: 80vh;
-    border-top: 4px solid #1e3a8a;
-  }
-  
-  #alertBox {
-    display: none;
-    padding: 15px;
-    background-color: red;
-    color: white;
-    font-weight: bold;
-    font-size: 1.2rem;
-  }
-  
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #0b0c2a;
+  color: white;
+  text-align: center;
+}
+
+h1 {
+  padding: 20px;
+  background-color: #1e3a8a;
+  margin: 0;
+}
+
+
+
+#alertBox {
+  display: none;
+  padding: 15px;
+  background-color: red;
+  color: white;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+/* Add to style.css */
+#map {
+  height: 80vh;
+  min-height: 400px;
+  width: 10%;
+}
+
+
+#alertBox {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 15px 30px;
+  background: #ff4444;
+  color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+  z-index: 1000;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+

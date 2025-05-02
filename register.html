@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      position: relative;
+    }
+
+    .form-container {
+      background-color: rgba(0,0,0,0.6);
+      padding: 2.5rem;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+      transform: translateY(0);
+      transition: transform 0.3s ease;
+      animation: formEntrance 0.5s ease-out;
+    }
+
+    @keyframes formEntrance {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    h2 {
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      color: #00bcd4;
+      text-shadow: 0 2px 4px rgba(0,188,212,0.3);
+    }
+
+    .input-group {
+      position: relative;
+      margin: 1rem 0;
+    }
+
+    input {
+      padding: 1rem 1rem 1rem 40px;
+      width: 100%;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      border-color: #00bcd4;
+      outline: none;
+      box-shadow: 0 0 10px rgba(0,188,212,0.3);
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      fill: rgba(255,255,255,0.5);
+    }
+
+    button {
+      padding: 1rem;
+      background: linear-gradient(135deg, #00bcd4, #0097a7);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,188,212,0.4);
+    }
+
+    .loader {
+      width: 20px;
+      height: 20px;
+      border: 3px solid #fff;
+      border-bottom-color: transparent;
+      border-radius: 50%;
+      animation: rotation 1s linear infinite;
+      display: none;
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    @keyframes rotation {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .password-strength {
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      margin: 0.5rem 0;
+      transition: all 0.3s ease;
+    }
+
+    .error-message {
+      color: #ff4444;
+      font-size: 0.9rem;
+      text-align: left;
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    .success-message {
+      color: #00C851;
+      display: none;
+      margin: 1rem 0;
+    }
+
+    .terms {
+      font-size: 0.9rem;
+      margin: 1rem 0;
+    }
+
+    .show-password {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 1rem 0;
+      cursor: pointer;
+    }
+
+    .social-login {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .social-btn {
+      padding: 0.8rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    @media (max-width: 480px) {
+      .form-container {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="firebaseConfig.js"></script>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Safe Raahi</h2>
+    
+    <div class="input-group">
+      <svg class="input-icon" viewBox="0 0 24 24">
+        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+      </svg>
+      <input type="email" id="email" placeholder="Email" required>
+    </div>
+
+    <div class="input-group">
+      <svg class="input-icon" viewBox="0 0 24 24">
+        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+      </svg>
+      <input type="password" id="password" placeholder="Password" required>
+      <div class="loader" id="passwordLoader"></div>
+    </div>
+    <div class="password-strength" id="passwordStrength"></div>
+
+    <div class="input-group">
+      <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+      <div class="error-message" id="passwordError">Passwords don't match!</div>
+    </div>
+
+    <div class="show-password" onclick="togglePasswordVisibility()">
+      <input type="checkbox" id="showPassword">
+      <label for="showPassword">Show Passwords</label>
+    </div>
+
+    <div class="terms">
+      <input type="checkbox" id="terms" required>
+      <label for="terms">I agree to the <a href="#">Terms of Service</a></label>
+    </div>
+
+    <button onclick="register()" id="registerBtn">
+      <span id="buttonText">Create Account</span>
+      <div class="loader" id="buttonLoader"></div>
+    </button>
+
+    <div class="success-message" id="successMessage">Registration successful! Redirecting...</div>
+    <div class="error-message" id="generalError"></div>
+
+    <div class="social-login">
+      <div class="social-btn" style="background: #4285F4" onclick="googleLogin()">
+        <span>Google</span>
+      </div>
+      <div class="social-btn" style="background: #3B5998" onclick="facebookLogin()">
+        <span>Facebook</span>
+      </div>
+    </div>
+
+    <p>Already have an account? <a href="login.html">Login here</a></p>
+  </div>
+
+  <script>
+    // Password strength checker
+    function checkPasswordStrength(password) {
+      const strength = {
+        0: { color: '#ff4444', width: '20%' },
+        1: { color: '#ff4444', width: '40%' },
+        2: { color: '#ffbb33', width: '60%' },
+        3: { color: '#00C851', width: '80%' },
+        4: { color: '#00C851', width: '100%' }
+      };
+      
+      let score = 0;
+      if (password.length >= 8) score++;
+      if (password.match(/[A-Z]/)) score++;
+      if (password.match(/[0-9]/)) score++;
+      if (password.match(/[^A-Za-z0-9]/)) score++;
+      
+      return strength[Math.min(score, 4)];
+    }
+
+    // Real-time password validation
+    document.getElementById('password').addEventListener('input', function(e) {
+      const strength = checkPasswordStrength(e.target.value);
+      const strengthBar = document.getElementById('passwordStrength');
+      strengthBar.style.background = strength.color;
+      strengthBar.style.width = strength.width;
+    });
+
+    // Password match checker
+    document.getElementById('confirmPassword').addEventListener('input', function() {
+      const password = document.getElementById('password').value;
+      const confirm = this.value;
+      const errorElement = document.getElementById('passwordError');
+      
+      if (password && confirm && password !== confirm) {
+        errorElement.style.display = 'block';
+        this.style.borderColor = '#ff4444';
+      } else {
+        errorElement.style.display = 'none';
+        this.style.borderColor = 'rgba(255,255,255,0.1)';
+      }
+    });
+
+    // Toggle password visibility
+    function togglePasswordVisibility() {
+      const show = document.getElementById('showPassword').checked;
+      document.getElementById('password').type = show ? 'text' : 'password';
+      document.getElementById('confirmPassword').type = show ? 'text' : 'password';
+    }
+
+    // Enhanced register function
+    async function register() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const btn = document.getElementById('registerBtn');
+      const buttonText = document.getElementById('buttonText');
+      const loader = document.getElementById('buttonLoader');
+
+      // Show loading state
+      btn.disabled = true;
+      buttonText.textContent = 'Creating Account...';
+      loader.style.display = 'block';
+
+      try {
+        if (password !== confirmPassword) {
+          throw new Error("Passwords don't match!");
+        }
+
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+        
+        // Show success state
+        document.getElementById('successMessage').style.display = 'block';
+        btn.style.background = '#00C851';
+        buttonText.textContent = 'Success!';
+        
+        // Redirect after delay
+        setTimeout(() => {
+          window.location.href = "vehicleInput.html";
+        }, 1500);
+        
+      } catch (error) {
+        document.getElementById('generalError').textContent = error.message;
+        document.getElementById('generalError').style.display = 'block';
+        document.querySelector('.form-container').style.animation = 'shake 0.5s';
+      } finally {
+        // Reset button state
+        btn.disabled = false;
+        buttonText.textContent = 'Create Account';
+        loader.style.display = 'none';
+      }
+    }
+
+    // Add shake animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        50% { transform: translateX(10px); }
+        75% { transform: translateX(-10px); }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Redirect if already logged in
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) window.location.href = "vehicleInput.html";
+    });
+  </script>
+</body>
+</html>

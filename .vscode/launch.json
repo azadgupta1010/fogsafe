@@ -7,8 +7,9 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Open index.html",
-            "file": "c:\\Users\\AZAD\\Desktop\\New folder (2)\\vehicleInput.html"
+            "name": "Launch Chrome against localhost",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
         }
     ]
-}
+}v
