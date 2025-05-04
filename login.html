@@ -3,6 +3,7 @@
 <head>
   <title>Login</title>
   <style>
+    /* Body ke liye styling - center aligned, gradient background with animation */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #3a6073);
@@ -17,12 +18,14 @@
       animation: gradientShift 15s ease infinite;
     }
 
+    /* Background gradient ka animation */
     @keyframes gradientShift {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
 
+    /* Form container ke liye styling - blurred background, animation, shadow */
     .form-container {
       background: rgba(0,0,0,0.3);
       padding: 40px;
@@ -35,22 +38,26 @@
       border: 1px solid rgba(255,255,255,0.1);
     }
 
+    /* Form container ka fade in animation */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Form container ka float animation - halki si upar neeche movement */
     @keyframes float {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
     }
 
+    /* Heading ke liye styling */
     h2 {
       margin-bottom: 30px;
       font-size: 2em;
       text-shadow: 0 4px 6px rgba(0,0,0,0.2);
     }
 
+    /* Input fields ki styling */
     input {
       padding: 15px;
       margin: 15px 0;
@@ -64,16 +71,19 @@
       transition: all 0.3s ease;
     }
 
+    /* Input field focus hone par styling */
     input:focus {
       outline: none;
       background: rgba(255,255,255,0.2);
       box-shadow: 0 0 15px rgba(0,188,212,0.5);
     }
 
+    /* Placeholder text ka color */
     input::placeholder {
       color: rgba(255,255,255,0.7);
     }
 
+    /* Button ke liye styling */
     button {
       padding: 15px 30px;
       margin: 20px 0;
@@ -90,15 +100,18 @@
       overflow: hidden;
     }
 
+    /* Button hover effect */
     button:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(0,188,212,0.4);
     }
 
+    /* Button click hone par */
     button:active {
       transform: translateY(0);
     }
 
+    /* Button ke andar hover effect ke liye light overlay */
     button::after {
       content: '';
       position: absolute;
@@ -115,6 +128,7 @@
       left: 120%;
     }
 
+    /* Loading spinner jab login ho raha ho */
     .spinner {
       display: none;
       width: 20px;
@@ -125,10 +139,12 @@
       animation: spin 1s ease-in-out infinite;
     }
 
+    /* Spinner ka rotate animation */
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
 
+    /* Link hover effect */
     a {
       color: #00bcd4;
       text-decoration: none;
@@ -139,30 +155,38 @@
       text-shadow: 0 0 10px rgba(0,188,212,0.5);
     }
 
+    /* Error hone par form shake karega */
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
       25% { transform: translateX(10px); }
       75% { transform: translateX(-10px); }
     }
   </style>
-  <!-- Firebase SDK -->
+
+  <!-- Firebase SDKs load kar rahe hain -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-  <script src="firebaseConfig.js"></script>
+  <script src="firebaseConfig.js"></script> <!-- Firebase configuration file include kiya gaya hai -->
 </head>
 <body>
+  <!-- Form container -->
   <div class="form-container">
     <h2>🔒 Login</h2>
     <input type="email" id="email" placeholder="Email" required>
     <input type="password" id="password" placeholder="Password" required>
+    
+    <!-- Login button with spinner -->
     <button onclick="login()">
       <span class="button-text">Login</span>
       <div class="spinner"></div>
     </button>
+
+    <!-- Register page link -->
     <p>Don't have an account? <a href="register.html">Register here</a></p>
   </div>
 
   <script>
+    // Login function
     function login() {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
@@ -170,31 +194,35 @@
       const spinner = document.querySelector('.spinner');
       const buttonText = document.querySelector('.button-text');
 
-      // Show loading spinner
+      // Button disable kar rahe hain aur spinner dikhate hain
       button.disabled = true;
       buttonText.style.display = 'none';
       spinner.style.display = 'inline-block';
 
+      // Firebase auth ka signIn method
       firebase.auth().signInWithEmailAndPassword(email, password)
         .then(() => {
+          // Login successful hone par vehicleInput.html par redirect
           window.location.href = "vehicleInput.html";
         })
         .catch(error => {
-          // Reset button state
+          // Agar error aaye to button aur spinner ko reset karo
           button.disabled = false;
           buttonText.style.display = 'inline-block';
           spinner.style.display = 'none';
           
-          // Add error animation
+          // Shake animation show karo to indicate error
           document.querySelector('.form-container').style.animation = 'shake 0.4s ease';
           setTimeout(() => {
             document.querySelector('.form-container').style.animation = '';
           }, 400);
+
+          // Error message alert me show karo
           alert(error.message);
         });
     }
 
-    // Redirect if already logged in
+    // Agar user already logged in hai to directly redirect karo
     firebase.auth().onAuthStateChanged(user => {
       if (user) window.location.href = "vehicleInput.html";
     });

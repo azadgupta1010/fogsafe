@@ -49,7 +49,7 @@ firebase.auth().onAuthStateChanged(user => {
   function initializeMap(location) {
       map = new google.maps.Map(document.getElementById("map"), {
           center: location,
-          zoom: 14,
+          zoom: 16,
           mapTypeControl: true,
           streetViewControl: false,
           styles: [
@@ -73,14 +73,30 @@ firebase.auth().onAuthStateChanged(user => {
   }
 
   function startLocationUpdates() {
+    let lastLocation = null;
+    let lastUpdateTime = null;
+
       navigator.geolocation.watchPosition(position => {
-          myLocation = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-          };
+        const newLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+        };
+        const now = Date.now();
+          // Calculate speed if possible
+       if (lastLocation && lastUpdateTime) {
+        const distance = getDistance(lastLocation, newLocation); // in km
+        const timeDiff = (now - lastUpdateTime) / 3600000; // in hours
+        const speed = timeDiff > 0 ? (distance / timeDiff).toFixed(1) : 0;
+        document.getElementById('speedCard').textContent = `Speed: ${speed} km/h`;
+       }
+        lastLocation = newLocation;
+        lastUpdateTime = now;
+        myLocation = newLocation;
           if (myMarker) myMarker.setPosition(myLocation);
           map.setCenter(myLocation);
           updateLocation();
+          document.getElementById('coordCard').textContent =
+        `Lat: ${myLocation.lat.toFixed(4)}, Lng: ${myLocation.lng.toFixed(4)}`;
       }, error => {
           console.error("Error getting location updates:", error);
       }, { enableHighAccuracy: true, maximumAge: 0 });
@@ -101,19 +117,20 @@ firebase.auth().onAuthStateChanged(user => {
       db.ref(`vehicles/${vehicleNumber}`).set({
           location: myLocation,
           vehicleType: vehicleType,
-          timestamp: firebase.database.ServerValue.TIMESTAMP
+           timestamp: firebase.database.ServerValue.TIMESTAMP
       });
   };
 
   const watchNearbyCars = () => {
       db.ref('vehicles').on('value', snapshot => {
           let nearby = false;
+          nearbyCount = 0;
           const now = Date.now();
           
           snapshot.forEach(child => {
               if (child.key !== vehicleNumber) {
                   const data = child.val();
-                  if (now - data.timestamp > 120000) {
+                  if (now - data.timestamp > 12000) {
                       db.ref(`vehicles/${child.key}`).remove();
                       return;
                   }
@@ -121,26 +138,38 @@ firebase.auth().onAuthStateChanged(user => {
                   const distance = getDistance(myLocation, data.location);
                   updateVehicleMarker(child.key, data, distance);
                   
-                  if (distance < 1) nearby = true;
+                  if (distance < 1)
+                     nearby = true;
+                  nearbyCount++;
               }
           });
 
           updateAlertSystem(nearby);
           cleanupOldMarkers(snapshot);
+          document.getElementById('nearbyCard').textContent =
+            `Nearby Vehicles: ${nearbyCount}`;
       });
   };
 
   const updateVehicleMarker = (vehicleId, data, distance) => {
-      if (!otherMarkers[vehicleId]) {
+    const isBreakdown = data.breakdown;
+ 
+    if (!otherMarkers[vehicleId]) {
           otherMarkers[vehicleId] = new google.maps.Marker({
               position: data.location,
               map: map,
-              title: `${vehicleId} (${data.vehicleType})`,
-              icon: getVehicleIcon(data.vehicleType)
-          });
+              title: `${vehicleId} (${data.vehicleType})${isBreakdown ? " - BREAKDOWN" : ""}`,
+              icon: isBreakdown 
+              ? 'https://maps.google.com/mapfiles/kml/shapes/mechanic.png' // breakdown icon
+              : getVehicleIcon(data.vehicleType) });
       } else {
           otherMarkers[vehicleId].setPosition(data.location);
-      }
+          otherMarkers[vehicleId].setIcon(
+            isBreakdown
+              ? 'https://maps.google.com/mapfiles/kml/shapes/mechanic.png'
+              : getVehicleIcon(data.vehicleType)
+            );
+            }
       otherMarkers[vehicleId].setVisible(distance < 2);
   };
 
@@ -154,18 +183,20 @@ firebase.auth().onAuthStateChanged(user => {
   };
 
   const updateAlertSystem = (nearby) => {
-      const alertBox = document.getElementById('alertBox');
-      const alertSound = document.getElementById('alertSound');
-      
-      if (nearby) {
-          alertBox.style.display = 'block';
-          if (alertSound.paused) alertSound.play();
-      } else {
-          alertBox.style.display = 'none';
-          alertSound.pause();
-          alertSound.currentTime = 0;
-      }
-  };
+    console.log(nearby); 
+    const alertBox = document.getElementById('alertBox');
+    const alertSound = document.getElementById('alertSound');
+    
+    if (nearby) {
+        alertBox.classList.add('active'); // Add active class to show the alert
+        if (alertSound.paused) alertSound.play();
+    } else {
+        alertBox.classList.remove('active'); // Remove active class to hide the alert
+        alertSound.pause();
+        alertSound.currentTime = 0;
+    }
+};
+
 
   const getDistance = (loc1, loc2) => {
       const toRad = x => x * Math.PI / 180;

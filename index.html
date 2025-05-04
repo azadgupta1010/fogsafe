@@ -4,6 +4,7 @@
   <title>Fog Road Safety</title>
   <style>
     body {
+      
       margin: 0;
       font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
       background: linear-gradient(45deg, #0b1a20, #11232b);
@@ -126,6 +127,57 @@
       transform: translateY(-3px) scale(1.1);
       box-shadow: 0 8px 25px rgba(0, 188, 212, 0.5);
     }
+
+    .floating-cards {
+  position: absolute;
+  top: 150px;
+  left: 10px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: slideIn 1s ease-out forwards;
+  opacity: 0;
+}
+
+.floating-cards .card {
+  padding: 20px 15px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border-radius: 10px;
+  font-size: 14px;
+  min-width: 130px;
+  box-shadow: 0 4px 12px rgba(45, 12, 146, 0.4);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  transform: translateY(5px);
+}
+
+.floating-cards .card:hover {
+  transform: translateY(-3px) scale(1.02);
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+body.light-mode .floating-cards .card {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: black;
+}
+
+body.light-mode .floating-cards .card:hover {
+  background-color: #ffffff;
+}
+
+/* Slide-in animation */
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
   </style>
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -141,10 +193,17 @@
   <h1> Fog Road Safety System</h1>
   <div id="map"></div>
   <div id="alertBox">⚠️ WARNING: Another vehicle is within 1 KM!</div>
-
+ 
+  <div class="floating-cards">
+    <div class="card" id="speedCard">Speed: 0 km/h</div>
+    <div class="card" id="coordCard">Lat: 0, Lng: 0</div>
+    <div class="card" id="nearbyCard">Nearby Vehicles: 0</div>
+  </div>
   <div class="floating-controls">
+    <div class="control-btn" onclick="refreshPage()">🔄</div>
     <div class="control-btn" onclick="centerMap()">📍</div>
     <div class="control-btn" onclick="toggleAlerts()">🤍</div>
+    <div class="control-btn" onclick="toggleBreakdown()">🛠️</div> <!-- NEW -->
   </div>
 
   <audio id="alertSound" src="beep.mp3" preload="auto"></audio>
@@ -157,13 +216,16 @@
   <script>
     // Add these to your existing script.js
     function centerMap() {
-      if (map && myLocation) {
-        map.panTo(myLocation);
-        // Add animation effect
-        map.setZoom(15);
-        setTimeout(() => map.setZoom(14), 500);
-      }
-    }
+       console.log("centerMap called");
+         if (map && myLocation) {
+            map.panTo(myLocation);
+         map.setZoom(15);
+         setTimeout(() => map.setZoom(14), 500);
+        } else {
+         console.log("map or myLocation not ready");
+         }
+        }
+
 
     function toggleAlerts() {
       const btn = document.querySelector('.control-btn:nth-child(2)');
@@ -171,9 +233,22 @@
       btn.textContent = alertsMuted ? '🔔' : '🔕';
       btn.style.background = alertsMuted ? '#00C851' : '#00bcd4';
     }
+    function refreshPage() {
+      window.location.reload(); // This refreshes only the current page
+
+    }
+    let isBreakdown = false;
+
+function toggleBreakdown() {
+  isBreakdown = !isBreakdown;
+  updateLocation();
+  alert(isBreakdown ? "Marked as Breakdown Vehicle" : "Breakdown Cleared");
+}
+
   </script>
   
   <!-- Then your application script -->
   <script src="script.js"></script>
+  
 </body>
 </html>
