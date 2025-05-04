@@ -177,6 +177,11 @@ body.light-mode .floating-cards .card:hover {
     transform: translateX(0);
   }
 }
+.control-btn:last-child {
+  background-color: #e53935 !important;
+  color: white;
+}
+
 
   </style>
   <!-- Firebase SDKs -->
@@ -204,6 +209,8 @@ body.light-mode .floating-cards .card:hover {
     <div class="control-btn" onclick="centerMap()">📍</div>
     <div class="control-btn" onclick="toggleAlerts()">🤍</div>
     <div class="control-btn" onclick="toggleBreakdown()">🛠️</div> <!-- NEW -->
+    <div class="control-btn" onclick="handleEmergency()">sos</div>
+
   </div>
 
   <audio id="alertSound" src="beep.mp3" preload="auto"></audio>

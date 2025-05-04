@@ -21,6 +21,41 @@ firebase.auth().onAuthStateChanged(user => {
   let myLocation = { lat: 0, lng: 0 };
   let otherMarkers = {};
 
+  function handleEmergency() {
+    if (!myLocation) {
+      alert("Location not available.");
+      return;
+    }
+  
+    const emergencyNumber = "112"; // Change as needed (India's emergency number)
+    const emergencyContacts = [
+      "+918053317489",
+      "+917015277924"
+    ];
+  
+    // Trigger phone call
+    window.open(`tel:${emergencyNumber}`, '_self');
+  
+    // Send location to contacts (via a backend or SMS API fallback)
+    const message = `🚨 Emergency! Vehicle Breakdown. Location: https://www.google.com/maps?q=${myLocation.lat},${myLocation.lng}`;
+    
+   }
+   window.handleEmergency = handleEmergency; // <- Add this line  kyuki baaki firebase m h 
+  
+   function markBreakdown() {
+    if (!myLocation || !vehicleNumber) {
+      alert("Vehicle info not available.");
+      return;
+    }
+  
+    db.ref(`vehicles/${vehicleNumber}`).update({
+      breakdown: true
+    });
+  
+    alert("Breakdown marked. Nearby vehicles will be alerted.");
+  }
+  window.markBreakdown = markBreakdown; // <- Add this line
+
   // Map initialization function
   function initMap() {
     document.getElementById('loadingScreen').style.display = 'flex';
@@ -45,7 +80,7 @@ firebase.auth().onAuthStateChanged(user => {
           setupMapFeatures();
       }, { enableHighAccuracy: true });
   }
-
+    window.initMap=initMap;
   function initializeMap(location) {
       map = new google.maps.Map(document.getElementById("map"), {
           center: location,
@@ -66,11 +101,13 @@ firebase.auth().onAuthStateChanged(user => {
           icon: getVehicleIcon(vehicleType)
       });
   }
+   window.initializeMap=initializeMap;
 
   function setupMapFeatures() {
       updateLocation();
       watchNearbyCars();
   }
+  window.setupMapFeatures = setupMapFeatures; // <- Add this line
 
   function startLocationUpdates() {
     let lastLocation = null;
@@ -101,11 +138,12 @@ firebase.auth().onAuthStateChanged(user => {
           console.error("Error getting location updates:", error);
       }, { enableHighAccuracy: true, maximumAge: 0 });
   }
+   window.startLocationUpdates=startLocationUpdates;
 
   // Helper functions
   const getVehicleIcon = (type) => {
       const icons = {
-          car: 'https://maps.google.com/mapfiles/kml/shapes/car.png',
+          car: 'https://maps.google.com/mapfiles/kml/shapes/bus.png',
           bus: 'https://maps.google.com/mapfiles/kml/shapes/bus.png',
           truck: 'https://maps.google.com/mapfiles/kml/shapes/truck.png',
           bike: 'https://maps.google.com/mapfiles/kml/shapes/cycling.png'
@@ -122,14 +160,16 @@ firebase.auth().onAuthStateChanged(user => {
   };
 
   const watchNearbyCars = () => {
+    
       db.ref('vehicles').on('value', snapshot => {
           let nearby = false;
-          nearbyCount = 0;
+          let nearbyCount = 0;
           const now = Date.now();
           
           snapshot.forEach(child => {
               if (child.key !== vehicleNumber) {
                   const data = child.val();
+
                   if (now - data.timestamp > 12000) {
                       db.ref(`vehicles/${child.key}`).remove();
                       return;
@@ -138,9 +178,14 @@ firebase.auth().onAuthStateChanged(user => {
                   const distance = getDistance(myLocation, data.location);
                   updateVehicleMarker(child.key, data, distance);
                   
-                  if (distance < 1)
+                  if (distance < 1){
                      nearby = true;
-                  nearbyCount++;
+                     
+                  if (data.breakdown) {
+                    document.getElementById('alertBox').textContent = "⚠️ Breakdown Vehicle Ahead!";
+                }
+            } 
+                nearbyCount++;
               }
           });
 
@@ -148,7 +193,9 @@ firebase.auth().onAuthStateChanged(user => {
           cleanupOldMarkers(snapshot);
           document.getElementById('nearbyCard').textContent =
             `Nearby Vehicles: ${nearbyCount}`;
+            
       });
+      
   };
 
   const updateVehicleMarker = (vehicleId, data, distance) => {
@@ -215,5 +262,7 @@ firebase.auth().onAuthStateChanged(user => {
 
 // Initialize the application when window loads
 window.onload = () => {
+    console.log("Window loaded, waiting for Firebase auth...");
+
   // This will trigger the auth check and subsequent initialization
 };
