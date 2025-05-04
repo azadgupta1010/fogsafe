@@ -1,82 +1,249 @@
 body {
+      
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #0b0c2a;
+  font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
+  background: linear-gradient(45deg, #0b1a20, #11232b);
   color: white;
-  text-align: center;
+  overflow: hidden;
 }
 
 h1 {
-  padding: 20px;
-  background-color: #1e3a8a;
+  text-align: center;
+  padding: 25px;
   margin: 0;
+  background: rgba(0, 0, 0, 0.4);
+  font-size: 2.5em;
+  text-shadow: 0 0 15px rgba(0, 188, 212, 0.5);
+  animation: titleGlow 2s ease-in-out infinite alternate;
 }
 
-
-
-#alertBox {
-  display: none;
-  padding: 15px;
-  background-color: red;
-  color: white;
-  font-weight: bold;
-  font-size: 1.5rem;
-}
-
-/* Add to style.css */
 #map {
-  height: 80vh;
-  min-height: 400px;
   width: 100%;
+  height: 85vh;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
-
 #alertBox {
-  display: none;
-  padding: 15px;
-  background-color: red;
-  color: white;
-  font-weight: bold;
-  font-size: 1.5rem;
   position: fixed;
-  bottom: 20px;
+  bottom: -100px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1000;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
-  transition: opacity 0.3s ease, bottom 0.3s ease;
+  padding: 20px 40px;
+  background: linear-gradient(45deg, #ff4444, #cc0000);
+  color: white;
+  border-radius: 15px;
+  font-weight: bold;
+  box-shadow: 0 10px 30px rgba(255, 68, 68, 0.3);
   opacity: 0;
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
-/* When the alert is active */
 #alertBox.active {
-  display: block;   /* Ensure the box is shown */
-  opacity: 1;        /* Make the box fully visible */
-  bottom: 30px;      /* Move the box upwards */
+  bottom: 30px;
+  opacity: 1;
+}
+
+#alertBox::before {
+  content: '⚠️';
+  font-size: 1.5em;
+  animation: pulse 1.5s infinite;
+}
+
+.map-overlay {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 15px;
+  border-radius: 10px;
+  z-index: 1000;
+}
+
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loader {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #00bcd4;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes titleGlow {
+  from { text-shadow: 0 0 10px rgba(0, 188, 212, 0.5); }
+  to { text-shadow: 0 0 25px rgba(0, 188, 212, 0.8); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.floating-controls {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: flex;
+  gap: 15px;
+  z-index: 1000;
+}
+
+.control-btn {
+  background: rgba(0, 188, 212, 0.9);
+  padding: 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 188, 212, 0.3);
+}
+
+.control-btn:hover {
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 8px 25px rgba(0, 188, 212, 0.5);
 }
 
 .floating-cards {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+position: absolute;
+top: 150px;
+left: 10px;
+z-index: 1000;
+display: flex;
+flex-direction: column;
+gap: 10px;
+animation: slideIn 1s ease-out forwards;
+opacity: 0;
 }
 
 .floating-cards .card {
-  padding: 10px 15px;
-  background-color: rgba(0, 0, 0, 0.6);
-  color: white;
-  border-radius: 8px;
-  font-size: 14px;
-  min-width: 180px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+padding: 20px 15px;
+background-color: rgba(0, 0, 0, 0.6);
+color: white;
+border-radius: 10px;
+font-size: 14px;
+min-width: 130px;
+box-shadow: 0 4px 12px rgba(45, 12, 146, 0.4);
+transition: transform 0.3s ease, background-color 0.3s ease;
+transform: translateY(5px);
+}
+
+.floating-cards .card:hover {
+transform: translateY(-3px) scale(1.02);
+background-color: rgba(0, 0, 0, 0.8);
 }
 
 body.light-mode .floating-cards .card {
-  background-color: rgba(255, 255, 255, 0.8);
-  color: black;
+background-color: rgba(255, 255, 255, 0.9);
+color: black;
 }
+
+body.light-mode .floating-cards .card:hover {
+background-color: #ffffff;
+}
+
+/* Slide-in animation */
+@keyframes slideIn {
+0% {
+opacity: 0;
+transform: translateX(-30px);
+}
+100% {
+opacity: 1;
+transform: translateX(0);
+}
+}
+.control-btn:last-child {
+background-color: #e53935 !important;
+color: white;
+}
+#toggleCameraBtn {
+  position: fixed;
+  top: 150px;
+  right: 20px;
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+
+.alert-box {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ff4d4d;
+  color: white;
+  padding: 20px 40px;
+  font-size: 24px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px #ff4d4d;
+  z-index: 1000;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+#findPetrolButton {
+  position: fixed;
+  bottom: 30px; /* Distance from the bottom of the screen */
+  right: 370px; /* Distance from the right of the screen */
+  background-color: #06b6e6; /* Button color */
+  color: white; /* Text color */
+  border: none; /* Remove border */
+  padding: 15px 20px; /* Padding inside the button */
+  font-size: 16px; /* Font size */
+  border-radius: 50px; /* Rounded corners */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Slight shadow for floating effect */
+  cursor: pointer; /* Pointer cursor on hover */
+  z-index: 1000; /* Ensure button is above other content */
+  transition: all 0.3s ease; /* Smooth transition */
+}
+
+/* Hover effect to make the button pop out a bit */
+#findPetrolButton:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+  transform: scale(1.05); /* Slightly bigger button on hover */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

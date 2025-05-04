@@ -55,7 +55,16 @@ firebase.auth().onAuthStateChanged(user => {
     alert("Breakdown marked. Nearby vehicles will be alerted.");
   }
   window.markBreakdown = markBreakdown; // <- Add this line
-
+ 
+  // to start camera 
+  function startVideo() {
+    navigator.mediaDevices.getUserMedia({ video: {} })
+      .then(stream => {
+        document.getElementById('video').srcObject = stream;
+      })
+      .catch(err => console.error('Camera error:', err));
+  }
+  
   // Map initialization function
   function initMap() {
     document.getElementById('loadingScreen').style.display = 'flex';
@@ -65,12 +74,19 @@ firebase.auth().onAuthStateChanged(user => {
               lat: pos.coords.latitude,
               lng: pos.coords.longitude
           };
+        
 
           initializeMap(myLocation);
           setupMapFeatures();
           startLocationUpdates();
   document.getElementById('loadingScreen').style.display = 'none';
-      }, (err) => {
+        map.setCenter(myLocation);
+
+          // 🔍 Call the petrol pump finder function (make sure it's defined)
+          findNearbyPetrolPump(new google.maps.LatLng(myLocation.lat, myLocation.lng));
+           
+
+}, (err) => {
           // Error callback
           console.error("Geolocation error:", err);
           alert("Please enable GPS to continue!");
@@ -81,6 +97,75 @@ firebase.auth().onAuthStateChanged(user => {
       }, { enableHighAccuracy: true });
   }
     window.initMap=initMap;
+
+    function findNearbyPetrolPump(location) {
+        const service = new google.maps.places.PlacesService(map);
+      
+        const request = {
+          location: location,
+          radius: 10000, // 10 km
+          type: ['gas_station']
+        };
+      
+        service.nearbySearch(request, (results, status) => {
+          if (status === google.maps.places.PlacesServiceStatus.OK) {
+            // Clear previous info
+            document.getElementById('petrolInfo').innerHTML = '';
+      
+            // Loop through up to 5 petrol pumps and display them
+            const maxResults = 5;
+            for (let i = 0; i < Math.min(results.length, maxResults); i++) {
+              const nearest = results[i];
+              const pumpLocation = nearest.geometry.location;
+      
+              // Add marker for each petrol pump
+              new google.maps.Marker({
+                map: map,
+                position: pumpLocation,
+                title: nearest.name,
+                icon: 'https://maps.google.com/mapfiles/ms/icons/gas.png'
+              });
+      
+              // Calculate distance from current location
+              const distance = getDistance(
+                { lat: location.lat(), lng: location.lng() },
+                { lat: pumpLocation.lat(), lng: pumpLocation.lng() }
+              );
+      
+              // Append info to the div
+              const petrolInfoDiv = document.getElementById('petrolInfo');
+              petrolInfoDiv.innerHTML += `
+                <p>⛽ <strong>${nearest.name}</strong><br>
+                   📏 Distance: ${distance.toFixed(2)} km</p>`;
+            }
+          } else {
+            console.error("Places API Error:", status);
+            document.getElementById('petrolInfo').innerText = 'Failed to find petrol pumps.';
+          }
+        });
+      }
+      
+      window.findNearbyPetrolPump=findNearbyPetrolPump;
+
+      function handleFindPetrolPump() {
+        // Get current location
+        navigator.geolocation.getCurrentPosition(position => {
+            const myLoc = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+    
+            // Call the function to find petrol pumps near the current location
+            findNearbyPetrolPump(myLoc);
+        }, error => {
+            alert("Error getting your location. Please try again.");
+            console.error(error);
+        });
+    }
+    
+      window.handleFindPetrolPump = handleFindPetrolPump;
+      
+
   function initializeMap(location) {
       map = new google.maps.Map(document.getElementById("map"), {
           center: location,
@@ -180,7 +265,7 @@ firebase.auth().onAuthStateChanged(user => {
                   
                   if (distance < 1){
                      nearby = true;
-                     
+
                   if (data.breakdown) {
                     document.getElementById('alertBox').textContent = "⚠️ Breakdown Vehicle Ahead!";
                 }
@@ -259,10 +344,68 @@ firebase.auth().onAuthStateChanged(user => {
   // Initialize the map after all checks
   initMap();
 });
+async function startVideoAndDetect() {
+    await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
+    await faceapi.nets.faceLandmark68Net.loadFromUri('/models');
+  
+    const video = document.getElementById('videoFeed');
+    navigator.mediaDevices.getUserMedia({ video: {} })
+      .then(stream => video.srcObject = stream);
+  
+    video.addEventListener('play', () => monitorEyes(video));
+  }
+  
 
 // Initialize the application when window loads
 window.onload = () => {
     console.log("Window loaded, waiting for Firebase auth...");
+    startVideoAndDetect();
+    let eyesClosedCounter = 0;
+
+async function monitorEyes(video) {
+  const alertDiv = document.getElementById('drowsyAlert');
+  const beep = document.getElementById('drowsyBeep');
+
+  setInterval(async () => {
+    const result = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+      .withFaceLandmarks();
+
+    if (result) {
+      const landmarks = result.landmarks;
+      const leftEye = landmarks.getLeftEye();
+      const rightEye = landmarks.getRightEye();
+      
+      const isClosed = areEyesClosed(leftEye, rightEye);
+
+      if (isClosed) {
+        eyesClosedCounter++;
+        if (eyesClosedCounter > 15) {
+          alertDiv.style.display = 'block';
+          if (beep.paused) beep.play();
+        }
+      } else {
+        eyesClosedCounter = 0;
+        alertDiv.style.display = 'none';
+        beep.pause();
+        beep.currentTime = 0;
+      }
+    }
+  }, 200);
+}
+
+function areEyesClosed(leftEye, rightEye) {
+  const eyeAspectRatio = (eye) => {
+    const a = distance(eye[1], eye[5]);
+    const b = distance(eye[2], eye[4]);
+    const c = distance(eye[0], eye[3]);
+    return (a + b) / (2.0 * c);
+  };
+  return (eyeAspectRatio(leftEye) + eyeAspectRatio(rightEye)) / 2 < 0.22;
+}
+
+function distance(p1, p2) {
+  return Math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2);
+}
 
   // This will trigger the auth check and subsequent initialization
 };

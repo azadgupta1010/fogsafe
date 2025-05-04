@@ -2,188 +2,12 @@
 <html>
 <head>
   <title>Fog Road Safety</title>
-  <style>
-    body {
-      
-      margin: 0;
-      font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
-      background: linear-gradient(45deg, #0b1a20, #11232b);
-      color: white;
-      overflow: hidden;
-    }
+ 
+  <!-- Load Face API -->
+  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
 
-    h1 {
-      text-align: center;
-      padding: 25px;
-      margin: 0;
-      background: rgba(0, 0, 0, 0.4);
-      font-size: 2.5em;
-      text-shadow: 0 0 15px rgba(0, 188, 212, 0.5);
-      animation: titleGlow 2s ease-in-out infinite alternate;
-    }
+  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
-    #map {
-      width: 100%;
-      height: 85vh;
-      transition: all 0.3s ease;
-      position: relative;
-    }
-
-    #alertBox {
-      position: fixed;
-      bottom: -100px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 20px 40px;
-      background: linear-gradient(45deg, #ff4444, #cc0000);
-      color: white;
-      border-radius: 15px;
-      font-weight: bold;
-      box-shadow: 0 10px 30px rgba(255, 68, 68, 0.3);
-      opacity: 0;
-      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    #alertBox.active {
-      bottom: 30px;
-      opacity: 1;
-    }
-
-    #alertBox::before {
-      content: '⚠️';
-      font-size: 1.5em;
-      animation: pulse 1.5s infinite;
-    }
-
-    .map-overlay {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: rgba(0, 0, 0, 0.7);
-      padding: 15px;
-      border-radius: 10px;
-      z-index: 1000;
-    }
-
-    .loading-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-
-    .loader {
-      width: 50px;
-      height: 50px;
-      border: 5px solid #00bcd4;
-      border-radius: 50%;
-      border-top-color: transparent;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes titleGlow {
-      from { text-shadow: 0 0 10px rgba(0, 188, 212, 0.5); }
-      to { text-shadow: 0 0 25px rgba(0, 188, 212, 0.8); }
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .floating-controls {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      display: flex;
-      gap: 15px;
-      z-index: 1000;
-    }
-
-    .control-btn {
-      background: rgba(0, 188, 212, 0.9);
-      padding: 15px;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 5px 15px rgba(0, 188, 212, 0.3);
-    }
-
-    .control-btn:hover {
-      transform: translateY(-3px) scale(1.1);
-      box-shadow: 0 8px 25px rgba(0, 188, 212, 0.5);
-    }
-
-    .floating-cards {
-  position: absolute;
-  top: 150px;
-  left: 10px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  animation: slideIn 1s ease-out forwards;
-  opacity: 0;
-}
-
-.floating-cards .card {
-  padding: 20px 15px;
-  background-color: rgba(0, 0, 0, 0.6);
-  color: white;
-  border-radius: 10px;
-  font-size: 14px;
-  min-width: 130px;
-  box-shadow: 0 4px 12px rgba(45, 12, 146, 0.4);
-  transition: transform 0.3s ease, background-color 0.3s ease;
-  transform: translateY(5px);
-}
-
-.floating-cards .card:hover {
-  transform: translateY(-3px) scale(1.02);
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-body.light-mode .floating-cards .card {
-  background-color: rgba(255, 255, 255, 0.9);
-  color: black;
-}
-
-body.light-mode .floating-cards .card:hover {
-  background-color: #ffffff;
-}
-
-/* Slide-in animation */
-@keyframes slideIn {
-  0% {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-.control-btn:last-child {
-  background-color: #e53935 !important;
-  color: white;
-}
-
-
-  </style>
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
@@ -191,6 +15,19 @@ body.light-mode .floating-cards .card:hover {
   <script src="firebaseConfig.js"></script>
 </head>
 <body>
+  <!-- Button to toggle the camera -->
+<button id="toggleCameraBtn">Start Driver Camera</button>
+
+<!-- Video preview for driver -->
+<video id="driverCam" width="320" height="240" autoplay muted playsinline style="display: none;"></video>
+<!-- Drowsiness Warning Box -->
+<div id="drowsyAlertBox" class="alert-box" style="display: none;">
+  ⚠️ Drowsiness Detected!
+</div>
+
+<!-- Beep Sound -->
+<audio id="drowsyBeep" src="beep.mp3" preload="auto"></audio>
+
   <div class="loading-screen" id="loadingScreen">
     <div class="loader"></div>
   </div>
@@ -199,6 +36,9 @@ body.light-mode .floating-cards .card:hover {
   <div id="map"></div>
   <div id="alertBox">⚠️ WARNING: Another vehicle is within 1 KM!</div>
  
+ 
+  <div id="petrolInfo" style="margin-top:10px;font-weight:bold;color:#0a58ca;"></div>
+  
   <div class="floating-cards">
     <div class="card" id="speedCard">Speed: 0 km/h</div>
     <div class="card" id="coordCard">Lat: 0, Lng: 0</div>
@@ -212,6 +52,10 @@ body.light-mode .floating-cards .card:hover {
     <div class="control-btn" onclick="handleEmergency()">sos</div>
 
   </div>
+
+  <button id="findPetrolButton" onclick="handleFindPetrolPump()">
+     ⛽
+</button>
 
   <audio id="alertSound" src="beep.mp3" preload="auto"></audio>
 
@@ -256,6 +100,8 @@ function toggleBreakdown() {
   
   <!-- Then your application script -->
   <script src="script.js"></script>
-  
+  <link rel="stylesheet" href="style.css">
+  <script defer src="camera.js"></script>
+
 </body>
 </html>
