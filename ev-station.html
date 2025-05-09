@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EV Charging Station </title>
+  <style>
+    :root {
+      --primary-color: #0ff; /* Neon cyan */
+      --accent-color: #00f5ff;
+      --bg-gradient: linear-gradient(135deg, #000, #0a0a0a);
+      --text-color: #f0f0f0;
+      --panel-bg: #1a1a1a;
+      --border-color: #333;
+      --glow-color: #0ff;
+      --button-hover: #00e5ff;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-image: url('background.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-attachment: fixed;
+      color: white;
+    }
+  
+    /* Optional: Overlay to improve readability */
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.6);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .top-bar {
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: 50px;
+      background: rgba(0,0,0,0.6);
+    }
+    .back-btn {
+      position: absolute;
+      left: 12px;
+      background: #1f1f1f;
+      color: #00ffff;
+      border: 2px solid #00ffff;
+      padding: 6px 12px;
+      font-size: 0.9em;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .back-btn:hover {
+      background: #00ffff;
+      color: #0a0a0a;
+      transform: scale(1.05);
+    }
+    .header {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.2em;
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+
+    #map {
+      height: 45vh;
+      width: 100%;
+      filter: grayscale(20%) brightness(80%) contrast(110%);
+    }
+
+    
+
+    .controls {
+      background: var(--panel-bg);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      box-shadow: 0 4px 12px rgba(0, 255, 255, 0.3);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-color);
+    }
+
+    .control-group label {
+      font-size: 18px;
+      color: var(--text-color);
+    }
+
+    .control-group input[type="range"] {
+      width: 200px;
+      accent-color: var(--primary-color);
+    }
+
+    .control-group input[type="range"]::-webkit-slider-thumb {
+      background: var(--primary-color);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      box-shadow: 0 0 8px var(--glow-color);
+    }
+
+    .control-group input[type="range"]::-webkit-slider-runnable-track {
+      background: #444;
+      height: 6px;
+      border-radius: 3px;
+    }
+
+    .control-group input[type="checkbox"] {
+      accent-color: var(--primary-color);
+    }
+
+    button {
+      padding: 12px 18px;
+      background: var(--primary-color);
+      color: black;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 0 10px var(--glow-color), 0 0 10px var(--glow-color);
+      transition: background 0.3s, transform 0.3s;
+      font-size: 15px;
+    }
+
+    button:hover {
+      background: var(--button-hover);
+      transform: scale(1.1);
+    }
+
+    .bottom-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-height: 30vh;
+      overflow-y: auto;
+      background: var(--panel-bg);
+      border-top: 3px solid var(--primary-color);
+      padding: 15px;
+      color: var(--text-color);
+      border-radius: 12px 12px 0 0;
+    }
+
+    .station {
+      padding: 12px;
+      background: #222;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 255, 255, 0.2);
+      margin-bottom: 15px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .station:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 255, 255, 0.3);
+    }
+
+    .station h4 {
+      margin: 0 0 10px;
+      color: var(--primary-color);
+      text-shadow: 0 0 5px var(--glow-color);
+    }
+
+    .station p {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    @media (max-width: 600px) {
+      .controls {
+        font-size: 14px;
+      }
+
+      .control-group {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      #map {
+        height: 50vh;
+      }
+    }
+  </style>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+
+
+    <div class="top-bar">
+        <button class="back-btn" onclick="window.location.href='index.html'">← Back</button>
+        <div class="header">🔌 Charging Station</div>
+      </div><div id="map"></div>
+
+ 
+<div class="controls">
+  <div class="control-group">
+    <label for="rangeSlider">🔎 Search Range: <span id="rangeValue">25</span> km</label>
+    <input type="range" id="rangeSlider" min="1" max="400" value="25" />
+  </div>
+  <div class="control-group">
+    <label>
+      <input type="checkbox" id="fastChargerFilter" />
+      ⚡ Fast Charger Only
+    </label>
+  </div>
+  <button onclick="fetchChargingStations()">Search Chargers</button>
+</div>
+
+<div class="bottom-panel" id="stationList">
+  <p style="text-align:center; color: #555;">Stations will appear here...</p>
+</div>
+
+<script>
+  const API_KEY = "63cc1875-da77-4189-bdbf-c4d07b9b3a90";
+  let map, userLat, userLng;
+
+  document.getElementById('rangeSlider').addEventListener('input', e => {
+    document.getElementById('rangeValue').innerText = e.target.value;
+  });
+
+  function initMap(lat, lng) {
+    map = L.map('map').setView([lat, lng], 13);
+    userLat = lat;
+    userLng = lng;
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.marker([lat, lng]).addTo(map).bindPopup("📍 You are here").openPopup();
+  }
+
+  function fetchChargingStations() {
+    const distance = document.getElementById("rangeSlider").value;
+    const fastOnly = document.getElementById("fastChargerFilter").checked;
+
+    const url = `https://api.openchargemap.io/v3/poi/?output=json&latitude=${userLat}&longitude=${userLng}&distance=${distance}&distanceunit=KM&maxresults=50&compact=true&verbose=false&key=${API_KEY}`;
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        const filtered = fastOnly
+          ? data.filter(d => d.Connections.some(c => c.Level && c.Level.IsFastChargeCapable))
+          : data;
+
+        showStations(filtered);
+      })
+      .catch(err => {
+        alert("❌ Failed to fetch data");
+        console.error(err);
+      });
+  }
+
+  function showStations(stations) {
+    document.getElementById("stationList").innerHTML = "";
+
+    if (!stations.length) {
+      document.getElementById("stationList").innerHTML = "<p style='text-align:center;'>❗ No stations found in this range.</p>";
+      return;
+    }
+
+    map.eachLayer(layer => {
+      if (layer instanceof L.Marker && !layer._popup._content.includes("You are here")) {
+        map.removeLayer(layer);
+      }
+    });
+
+    stations.forEach(station => {
+      const { AddressInfo, Connections } = station;
+      const name = AddressInfo.Title || "Unnamed";
+      const distance = AddressInfo.Distance.toFixed(2);
+      const fast = Connections.some(c => c.Level && c.Level.IsFastChargeCapable);
+      const status = station.StatusType?.Title || "Unknown";
+
+      L.marker([AddressInfo.Latitude, AddressInfo.Longitude]).addTo(map)
+        .bindPopup(`<b>${name}</b><br>${distance} km<br>Status: ${status}`);
+
+      const el = document.createElement("div");
+      el.className = "station";
+      el.innerHTML = `
+        <h4>${name}</h4>
+        <p>📍 ${AddressInfo.AddressLine1 || ""}, ${AddressInfo.Town || ""}</p>
+        <p>🚗 Distance: ${distance} km</p>
+        <p>⚡ Fast Charging: ${fast ? '✅' : '❌'}</p>
+        <p>🔄 Status: ${status}</p>
+      `;
+      document.getElementById("stationList").appendChild(el);
+    });
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    pos => initMap(pos.coords.latitude, pos.coords.longitude),
+    err => alert("📍 Geolocation permission is required.")
+  );
+  function goBack() {
+    window.location.href = 'index.html';
+    }
+</script>
+
+</body>
+</html>

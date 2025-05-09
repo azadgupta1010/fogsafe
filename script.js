@@ -42,19 +42,59 @@ firebase.auth().onAuthStateChanged(user => {
    }
    window.handleEmergency = handleEmergency; // <- Add this line  kyuki baaki firebase m h 
   
-   function markBreakdown() {
+  
+   function toggleBreakdown() {
     if (!myLocation || !vehicleNumber) {
-      alert("Vehicle info not available.");
+      alert("⚠️ Vehicle info not available.");
       return;
     }
   
-    db.ref(`vehicles/${vehicleNumber}`).update({
-      breakdown: true
-    });
+    const vehicleRef = db.ref(`vehicles/${vehicleNumber}`);
   
-    alert("Breakdown marked. Nearby vehicles will be alerted.");
+    vehicleRef.once('value').then(snapshot => {
+      const currentStatus = snapshot.val()?.breakdown || false;
+      const newStatus = !currentStatus;
+  
+      vehicleRef.update({
+        breakdown: newStatus
+      }).then(() => {
+        // Update button appearance
+        const btn = document.getElementById("breakdownBtn");
+        if (newStatus) {
+          btn.classList.add("active-breakdown");
+        } else {
+          btn.classList.remove("active-breakdown");
+        }
+  
+        // Show popup
+        const popup = document.getElementById("breakdownPopup");
+        const title = popup.querySelector("h3");
+        const message = popup.querySelector("p");
+  
+        if (newStatus) {
+          title.innerText = "🛠️ Breakdown Reported";
+          message.innerText = "Nearby vehicles will be alerted.";
+        } else {
+          title.innerText = "✅ Breakdown Cleared";
+          message.innerText = "You are now marked as safe.";
+        }
+  
+        popup.style.display = "flex";
+      }).catch(err => {
+        console.error("Error updating breakdown status:", err);
+        alert("❌ Failed to update breakdown status.");
+      });
+    }).catch(err => {
+      console.error("Error reading breakdown status:", err);
+      alert("❌ Failed to fetch breakdown status.");
+    });
   }
-  window.markBreakdown = markBreakdown; // <- Add this line
+  window.toggleBreakdown=toggleBreakdown;
+  
+ 
+  
+  
+   // <- Add this line
  
   // to start camera 
   function startVideo() {
@@ -98,73 +138,7 @@ firebase.auth().onAuthStateChanged(user => {
   }
     window.initMap=initMap;
 
-    function findNearbyPetrolPump(location) {
-        const service = new google.maps.places.PlacesService(map);
-      
-        const request = {
-          location: location,
-          radius: 10000, // 10 km
-          type: ['gas_station']
-        };
-      
-        service.nearbySearch(request, (results, status) => {
-          if (status === google.maps.places.PlacesServiceStatus.OK) {
-            // Clear previous info
-            document.getElementById('petrolInfo').innerHTML = '';
-      
-            // Loop through up to 5 petrol pumps and display them
-            const maxResults = 5;
-            for (let i = 0; i < Math.min(results.length, maxResults); i++) {
-              const nearest = results[i];
-              const pumpLocation = nearest.geometry.location;
-      
-              // Add marker for each petrol pump
-              new google.maps.Marker({
-                map: map,
-                position: pumpLocation,
-                title: nearest.name,
-                icon: 'https://maps.google.com/mapfiles/ms/icons/gas.png'
-              });
-      
-              // Calculate distance from current location
-              const distance = getDistance(
-                { lat: location.lat(), lng: location.lng() },
-                { lat: pumpLocation.lat(), lng: pumpLocation.lng() }
-              );
-      
-              // Append info to the div
-              const petrolInfoDiv = document.getElementById('petrolInfo');
-              petrolInfoDiv.innerHTML += `
-                <p>⛽ <strong>${nearest.name}</strong><br>
-                   📏 Distance: ${distance.toFixed(2)} km</p>`;
-            }
-          } else {
-            console.error("Places API Error:", status);
-            document.getElementById('petrolInfo').innerText = 'Failed to find petrol pumps.';
-          }
-        });
-      }
-      
-      window.findNearbyPetrolPump=findNearbyPetrolPump;
-
-      function handleFindPetrolPump() {
-        // Get current location
-        navigator.geolocation.getCurrentPosition(position => {
-            const myLoc = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-            };
     
-            // Call the function to find petrol pumps near the current location
-            findNearbyPetrolPump(myLoc);
-        }, error => {
-            alert("Error getting your location. Please try again.");
-            console.error(error);
-        });
-    }
-    
-      window.handleFindPetrolPump = handleFindPetrolPump;
-      
 
   function initializeMap(location) {
       map = new google.maps.Map(document.getElementById("map"), {
@@ -327,7 +301,7 @@ firebase.auth().onAuthStateChanged(user => {
         alertSound.pause();
         alertSound.currentTime = 0;
     }
-};
+ };
 
 
   const getDistance = (loc1, loc2) => {
@@ -343,8 +317,9 @@ firebase.auth().onAuthStateChanged(user => {
 
   // Initialize the map after all checks
   initMap();
-});
-async function startVideoAndDetect() {
+ });
+
+ async function startVideoAndDetect() {
     await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
     await faceapi.nets.faceLandmark68Net.loadFromUri('/models');
   
@@ -408,4 +383,30 @@ function distance(p1, p2) {
 }
 
   // This will trigger the auth check and subsequent initialization
+
+
+
+
 };
+function evcharger() {
+  window.location.href = 'ev-station.html';
+  }
+
+  function petrolPump() {
+    window.location.href = 'petrolPump.html';
+    }
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+

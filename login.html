@@ -1,231 +1,263 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Login</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login – Safe Raahi</title>
   <style>
-    /* Body ke liye styling - center aligned, gradient background with animation */
+
+#splashScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #000; /* or any background you want */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeOut 1s ease-in-out 2s forwards;
+}
+
+.splash-content {
+  text-align: center;
+  animation: zoomIn 1s ease-in-out;
+}
+
+.splash-content img {
+  width: 100px;
+  margin-bottom: 20px;
+}
+
+.splash-content h1 {
+  color: cyan;
+  font-size: 28px;
+  font-weight: bold;
+  text-shadow: 0 0 10px #00ffff;
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; visibility: hidden; }
+}
+
+    :root {
+      --cyan: #00bcd4;
+      --cyan-dark: #0097a7;
+      --bg-overlay: rgba(0,0,0,0.6);
+      --text-light: #f0f0f0;
+      --error: #ff4444;
+      --success: #00C851;
+    }
+
+    * { box-sizing: border-box; }
+
+    body, html {
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #3a6073);
-      background-size: 400% 400%;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      animation: gradientShift 15s ease infinite;
+      background: url('background.png') center/cover fixed no-repeat;
+      display: flex; align-items: center; justify-content: center;
     }
 
-    /* Background gradient ka animation */
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .overlay {
+      background: var(--bg-overlay);
+      width: 100%; height: 100%;
+      position: absolute; top: 0; left: 0;
+      z-index: 0;
     }
 
-    /* Form container ke liye styling - blurred background, animation, shadow */
     .form-container {
-      background: rgba(0,0,0,0.3);
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      position: relative; z-index: 1;
+      background: var(--bg-overlay);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      width: 90%; max-width: 360px;
+      animation: slideDown 0.5s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-20px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .form-container h2 {
+      margin: 0 0 1.5rem;
+      color: var(--cyan);
+      text-shadow: 0 2px 4px rgba(0,188,212,0.3);
       text-align: center;
-      transform: translateY(0);
-      animation: fadeIn 1s ease, float 3s ease-in-out infinite;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.1);
     }
 
-    /* Form container ka fade in animation */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Form container ka float animation - halki si upar neeche movement */
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    /* Heading ke liye styling */
-    h2 {
-      margin-bottom: 30px;
-      font-size: 2em;
-      text-shadow: 0 4px 6px rgba(0,0,0,0.2);
-    }
-
-    /* Input fields ki styling */
-    input {
-      padding: 15px;
-      margin: 15px 0;
-      width: 100%;
-      max-width: 300px;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      background: rgba(255,255,255,0.1);
-      color: white;
-      transition: all 0.3s ease;
-    }
-
-    /* Input field focus hone par styling */
-    input:focus {
-      outline: none;
-      background: rgba(255,255,255,0.2);
-      box-shadow: 0 0 15px rgba(0,188,212,0.5);
-    }
-
-    /* Placeholder text ka color */
-    input::placeholder {
-      color: rgba(255,255,255,0.7);
-    }
-
-    /* Button ke liye styling */
-    button {
-      padding: 15px 30px;
-      margin: 20px 0;
-      width: 100%;
-      max-width: 300px;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      background: linear-gradient(45deg, #00bcd4, #0097a7);
-      color: white;
-      cursor: pointer;
-      transition: all 0.3s ease;
+    .input-group {
       position: relative;
-      overflow: hidden;
+      margin-bottom: 1rem;
     }
 
-    /* Button hover effect */
+    .input-group input {
+      width: 100%;
+      padding: 0.9rem 1rem 0.9rem 2.5rem;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      color: white;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .input-group input:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 8px rgba(0,188,212,0.3);
+      outline: none;
+    }
+
+    .input-icon {
+      position: absolute; top: 50%; left: 0.8rem;
+      transform: translateY(-50%);
+      width: 1.2rem; height: 1.2rem; fill: rgba(255,255,255,0.5);
+    }
+
+    .error-message {
+      font-size: 0.9rem;
+      color: var(--error);
+      margin-top: 0.5rem;
+      display: none;
+      text-align: left;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.9rem;
+      background: linear-gradient(135deg, var(--cyan), var(--cyan-dark));
+      color: white; font-weight: 600;
+      border: none; border-radius: 8px;
+      cursor: pointer; position: relative;
+      overflow: hidden; transition: transform 0.3s, box-shadow 0.3s;
+    }
+
     button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0,188,212,0.4);
+      box-shadow: 0 5px 15px rgba(0,188,212,0.4);
     }
 
-    /* Button click hone par */
-    button:active {
-      transform: translateY(0);
-    }
-
-    /* Button ke andar hover effect ke liye light overlay */
-    button::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: rgba(255,255,255,0.1);
-      transform: rotate(45deg);
-      transition: all 0.5s;
-    }
-
-    button:hover::after {
-      left: 120%;
-    }
-
-    /* Loading spinner jab login ho raha ho */
-    .spinner {
+    .loader {
+      width: 1.2rem; height: 1.2rem;
+      border: 3px solid white; border-bottom-color: transparent;
+      border-radius: 50%; animation: spin 1s linear infinite;
+      position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
       display: none;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      border-top-color: white;
-      animation: spin 1s ease-in-out infinite;
     }
 
-    /* Spinner ka rotate animation */
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .redirect {
+      font-size: 0.9rem;
+      text-align: center;
+      margin-top: 1rem;
     }
 
-    /* Link hover effect */
-    a {
-      color: #00bcd4;
+    .redirect a {
+      color: var(--cyan);
       text-decoration: none;
-      transition: all 0.3s ease;
     }
 
-    a:hover {
+    .redirect a:hover {
       text-shadow: 0 0 10px rgba(0,188,212,0.5);
-    }
-
-    /* Error hone par form shake karega */
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(10px); }
-      75% { transform: translateX(-10px); }
     }
   </style>
 
-  <!-- Firebase SDKs load kar rahe hain -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-  <script src="firebaseConfig.js"></script> <!-- Firebase configuration file include kiya gaya hai -->
+  <script src="firebaseConfig.js"></script>
 </head>
 <body>
-  <!-- Form container -->
+
+  
+  <div id="splashScreen">
+    <div class="splash-content">
+      <img src="logo.jpeg" alt="Logo">
+      <h1>Safe Raahi</h1>
+    </div>
+  </div>
+  
+  <div class="overlay"></div>
+
   <div class="form-container">
     <h2>🔒 Login</h2>
-    <input type="email" id="email" placeholder="Email" required>
-    <input type="password" id="password" placeholder="Password" required>
-    
-    <!-- Login button with spinner -->
-    <button onclick="login()">
-      <span class="button-text">Login</span>
-      <div class="spinner"></div>
+
+    <div class="input-group">
+      <svg class="input-icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 ..."/></svg>
+      <input type="email" id="email" placeholder="Email" required>
+    </div>
+
+    <div class="input-group">
+      <svg class="input-icon" viewBox="0 0 24 24"><path d="M12 17c1.1 0 2-0.9 ..."/></svg>
+      <input type="password" id="password" placeholder="Password" required>
+    </div>
+
+    <div class="error-message" id="loginError"></div>
+
+    <button id="loginBtn" onclick="login()">
+      <span id="buttonText">Login</span>
+      <div class="loader" id="buttonLoader"></div>
     </button>
 
-    <!-- Register page link -->
-    <p>Don't have an account? <a href="register.html">Register here</a></p>
+    <p class="redirect">Don't have an account? <a href="register.html">Register here</a></p>
   </div>
 
   <script>
-    // Login function
+    const loginBtn = document.getElementById("loginBtn");
+    const loader = document.getElementById("buttonLoader");
+    const buttonText = document.getElementById("buttonText");
+    const errorDisplay = document.getElementById("loginError");
+
     function login() {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const button = document.querySelector('button');
-      const spinner = document.querySelector('.spinner');
-      const buttonText = document.querySelector('.button-text');
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
 
-      // Button disable kar rahe hain aur spinner dikhate hain
-      button.disabled = true;
-      buttonText.style.display = 'none';
-      spinner.style.display = 'inline-block';
+      if (!email || !password) {
+        errorDisplay.textContent = "Please fill in both fields.";
+        errorDisplay.style.display = "block";
+        return;
+      }
 
-      // Firebase auth ka signIn method
+      loginBtn.disabled = true;
+      loader.style.display = "inline-block";
+      buttonText.style.opacity = "0.5";
+
       firebase.auth().signInWithEmailAndPassword(email, password)
         .then(() => {
-          // Login successful hone par vehicleInput.html par redirect
           window.location.href = "vehicleInput.html";
         })
         .catch(error => {
-          // Agar error aaye to button aur spinner ko reset karo
-          button.disabled = false;
-          buttonText.style.display = 'inline-block';
-          spinner.style.display = 'none';
-          
-          // Shake animation show karo to indicate error
-          document.querySelector('.form-container').style.animation = 'shake 0.4s ease';
-          setTimeout(() => {
-            document.querySelector('.form-container').style.animation = '';
-          }, 400);
-
-          // Error message alert me show karo
-          alert(error.message);
+          errorDisplay.textContent = error.message;
+          errorDisplay.style.display = "block";
+        })
+        .finally(() => {
+          loginBtn.disabled = false;
+          loader.style.display = "none";
+          buttonText.style.opacity = "1";
         });
     }
 
-    // Agar user already logged in hai to directly redirect karo
     firebase.auth().onAuthStateChanged(user => {
       if (user) window.location.href = "vehicleInput.html";
     });
   </script>
+
+  <script>
+    // Optionally remove the splash element after animation
+    setTimeout(() => {
+      document.getElementById("splashScreen").style.display = "none";
+    }, 3000); // 3 seconds
+  </script>
+  
 </body>
 </html>

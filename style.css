@@ -235,6 +235,84 @@ color: white;
 }
 
 
+  #driverCam {
+    display: none;
+    width: 200px;
+    height: 150px;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    background-color: #fff;
+  }
+
+  /* For smaller screens (smartphones in portrait mode) */
+  @media (max-width: 600px) {
+    #driverCam {
+      width: 100%;
+      max-width: 200px;
+      height: auto;
+      bottom: 10px;
+      left: 10px;
+    }
+  }
+
+  /* For larger screens (landscape or tablets) */
+  @media (min-width: 601px) {
+    #driverCam {
+      width: 200px;
+      height: 150px;
+      bottom: 20px;
+      left: 20px;
+    }
+  }
+
+  #findPetrolBtn{
+  position: fixed;
+  bottom: 90px;
+  left: 20px;
+  z-index: 999;
+  padding: 10px 16px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .user-detail-btn {
+    background: rgba(4, 138, 142, 0.148); /* Semi-transparent dark background */
+     
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 1000;
+    border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px rgba(10, 171, 171, 0.1);
+      backdrop-filter: blur(0px);
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  }
+  
+  .user-detail-btn:hover {
+    background-color: #0097a7;
+  
+  }
+  .profile-picture {
+    width: 30px; /* Adjust size as needed */
+    height: 30px;
+    border-radius: 50%; /* Make it a circle */
+  }
+  
 
 
 
@@ -247,3 +325,10 @@ color: white;
 
 
 
+
+
+
+
+
+
+ 

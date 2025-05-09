@@ -2,42 +2,82 @@
 <html>
 <head>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-<script src="firebaseConfig.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="firebaseConfig.js"></script>
   <title>Enter Vehicle Info</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-image: url('background.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-attachment: fixed;
       color: white;
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
-      height: 100vh;
-      margin: 0;
+      align-items: center;
+      min-height: 100vh;
     }
+
     .form-container {
-      background-color: rgba(0,0,0,0.5);
+      background-color: rgba(0,0,0,0.6);
       padding: 30px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       text-align: center;
+      width: 90%;
+      max-width: 400px;
     }
-    input, select, button {
+
+    input {
       padding: 12px;
       margin: 10px 0;
       width: 100%;
-      max-width: 300px;
       border: none;
       border-radius: 8px;
       font-size: 16px;
     }
+
+    .vehicle-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .vehicle-card {
+      background-color: #060616;
+      border-radius: 16px;
+      padding: 15px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+
+    .vehicle-card.selected {
+      box-shadow: 0 0 15px #00ffff;
+      transform: scale(1.05);
+    }
+
+    .vehicle-card img {
+      width: 100%;
+      height: auto;
+    }
+
     button {
+      padding: 12px;
+      width: 100%;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
       background-color: #00bcd4;
       color: white;
       cursor: pointer;
     }
+
     button:hover {
       background-color: #0097a7;
     }
@@ -47,35 +87,55 @@
   <div class="form-container">
     <h2>Vehicle Information</h2>
     <input type="text" id="vehicleNumber" placeholder="Vehicle Number (HR 35 V 8754)" required>
-    <select id="vehicleType">
-      <option value="">Select Vehicle Type</option>
-      <option value="car">Car</option>
-      <option value="bus">Bus</option>
-      <option value="truck">Truck</option>
-      <option value="bike">Bike</option>
-    </select>
+
+    <div class="vehicle-grid" id="vehicleGrid">
+      <div class="vehicle-card" onclick="selectVehicle('car', this)">
+        <img src="images/car1.png" alt="Car">
+      </div>
+      <div class="vehicle-card" onclick="selectVehicle('bus', this)">
+        <img src="images/bus.png" alt="Bus">
+      </div>
+      <div class="vehicle-card" onclick="selectVehicle('truck', this)">
+        <img src="images/truck.png" alt="Truck">
+      </div>
+      <div class="vehicle-card" onclick="selectVehicle('bike', this)">
+        <img src="images/bike.png" alt="Bike">
+      </div>
+    </div>
+
     <button onclick="submitVehicleInfo()">Submit</button>
   </div>
 
+
+  
+
   <script>
+    let selectedType = "";
+
+    function selectVehicle(type, element) {
+      selectedType = type;
+      const cards = document.querySelectorAll(".vehicle-card");
+      cards.forEach(card => card.classList.remove("selected"));
+      element.classList.add("selected");
+    }
+
     function submitVehicleInfo() {
       const number = document.getElementById('vehicleNumber').value.trim();
-      const type = document.getElementById('vehicleType').value;
 
-      if (!number || !type) {
+      if (!number || !selectedType) {
         alert("Please enter all fields!");
         return;
       }
 
       localStorage.setItem('vehicleNumber', number);
-      localStorage.setItem('vehicleType', type);
+      localStorage.setItem('vehicleType', selectedType);
 
       window.location.href = "index.html";
     }
-    
   </script>
+
   <script>
-    // Auth check
+    // Firebase Auth check
     firebase.auth().onAuthStateChanged(user => {
       if (!user) window.location.href = "login.html";
     });

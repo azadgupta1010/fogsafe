@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fog Safety - User Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-image: url('background.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-attachment: fixed;
+      color: white;
+    }
+
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.6);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: rgba(28, 28, 28, 0.8);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px rgba(0,255,255,0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      color: #00ffff;
+    }
+    .profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.profile-photo-wrapper {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 0 12px #00ffff80;
+  transition: transform 0.2s ease;
+}
+
+.profile-photo-wrapper:hover {
+  transform: scale(1.05);
+}
+
+.profile-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.overlay-text {
+  position: absolute;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  width: 100%;
+  text-align: center;
+  color: #00ffff;
+  font-size: 14px;
+  padding: 5px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.profile-photo-wrapper:hover .overlay-text {
+  opacity: 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.setting-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  background-color: #ccc;
+  border-radius: 24px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  background-color: white;
+  left: 3px;
+  bottom: 3px;
+  transition: .4s;
+}
+
+.switch input:checked + .slider {
+  background-color: #00ffff;
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+/* Language Dropdown */
+.language-select-wrapper {
+  margin-top: 20px;
+  position: relative;
+  max-width: 250px;
+}
+
+.custom-select {
+  background: #222;
+  border: 1px solid #00ffff;
+  color: #00ffff;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.language-options {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  width: 100%;
+  background-color: #111;
+  border: 1px solid #00ffff;
+  border-top: none;
+  z-index: 10;
+}
+
+.language-options div {
+  padding: 10px;
+  cursor: pointer;
+  color: #00ffff;
+  border-top: 1px solid #00ffff33;
+}
+
+.language-options div:hover {
+  background-color: #00ffff22;
+}
+
+.custom-select.open + .language-options {
+  display: flex;
+}
+
+
+
+
+
+
+
+
+
+
+
+    .btn {
+      background-color: #00ffff;
+      border: none;
+      color: #000;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .btn:hover {
+      background-color: #00dddd;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0;
+    }
+
+    input[type="checkbox"] {
+      margin-left: 10px;
+    }
+
+    textarea {
+      background-color: #111;
+      border: 1px solid #00ffff;
+      color: #fff;
+      border-radius: 8px;
+      resize: vertical;
+    }
+
+   
+  
+    
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background-color: #222;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 100%;
+      color: white;
+    }
+
+    .modal-content input, .modal-content button {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .modal-content input {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #00ffff;
+      background-color: #111;
+      color: white;
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Profile Info -->
+  <div class="card">
+    <h2>👤 User Profile</h2>
+
+    <div class="profile-container">
+        <div class="profile-photo-wrapper" onclick="document.getElementById('profileUpload').click()">
+          <img id="profileImage" src="default.png" alt="Profile Photo" class="profile-photo">
+          <div class="overlay-text">Click to change</div>
+        </div>
+        <input type="file" id="profileUpload" accept="image/*" onchange="updateProfilePic(event)" hidden>
+      </div>
+      
+    <p><strong>Name:</strong> <span id="profileName">Azad Gupta</span></p>
+    <p><strong>Email:</strong> <span id="profileEmail">azad@example.com</span></p>
+    <p><strong>Phone:</strong> <span id="profilePhone">+91-9876543210</span></p>
+    <p><strong>Vehicle:</strong> <span id="profileVehicle">DL8CAF1234 - Sedan</span></p>
+    <button class="btn" onclick="editProfile()">Edit Profile</button>
+    <button class="btn" onclick="logout()">Logout</button>
+  </div>
+
+  <!-- App Settings -->
+  <div class="card settings">
+    <h2>⚙️ Settings</h2>
+  
+    <!-- Custom Styled Switches -->
+    <div class="setting-toggle">
+      <span>Enable Dark Mode</span>
+      <label class="switch">
+        <input type="checkbox" id="darkModeToggle" onchange="toggleSetting('darkMode', this.checked)">
+        <span class="slider"></span>
+      </label>
+    </div>
+  
+    <div class="setting-toggle">
+      <span>Notification Sound</span>
+      <label class="switch">
+        <input type="checkbox" id="notificationSoundToggle" onchange="toggleSetting('notificationSound', this.checked)">
+        <span class="slider"></span>
+      </label>
+    </div>
+  
+    <div class="setting-toggle">
+      <span>Auto Update Location</span>
+      <label class="switch">
+        <input type="checkbox" id="autoUpdateToggle" checked onchange="toggleSetting('autoUpdate', this.checked)">
+        <span class="slider"></span>
+      </label>
+    </div>
+  
+    <!-- Language Dropdown -->
+    <div class="language-select-wrapper">
+      <span>Select Language:</span>
+      <div class="custom-select" onclick="toggleLanguageDropdown()">
+        <span id="selectedLanguage">English</span>
+        <div class="arrow">&#9662;</div>
+      </div>
+      <div class="language-options" id="languageOptions">
+        <div onclick="changeLanguage('en')">English</div>
+        <div onclick="changeLanguage('es')">Spanish</div>
+        <div onclick="changeLanguage('fr')">French</div>
+        <div onclick="changeLanguage('de')">German</div>
+      </div>
+    </div>
+  </div>
+  
+
+  <!-- Trip History -->
+  <div class="card">
+    <h2>🧭 Trip History</h2>
+    <ul>
+      <li>Delhi → Agra (2 hrs 15 mins)</li>
+      <li>Agra → Jaipur (3 hrs 40 mins)</li>
+      <li>Jaipur → Delhi (4 hrs)</li>
+    </ul>
+  </div>
+
+  <!-- Help Section -->
+  <div class="card">
+    <h2>❓ Help & Guide</h2>
+    <p>Need help using the app?</p>
+    <ul>
+      <li>📍 Allow GPS access to enable live location tracking.</li>
+      <li>🚨 SOS button alerts your emergency contacts with location.</li>
+      <li>📝 Edit your profile from the profile section above.</li>
+      <li>🎛️ Customize app settings using the toggles.</li>
+    </ul>
+    <button class="btn" onclick="alert('Redirecting to detailed help page...')">More Help</button>
+  </div>
+
+  <div class="card">
+    <h2>ℹ️ About This App</h2>
+    <p>Learn more about the Fog Safety System, its features, and how it helps you stay safe in foggy driving conditions.</p>
+    <a href="about.html" class="btn">Read About</a>
+  </div>
+
+  <!-- Feedback Section -->
+  <div class="card">
+    <h2>📝 Feedback</h2>
+    <p>Tell us how we can improve!</p>
+    <textarea rows="4" placeholder="Your feedback..."></textarea>
+    <button class="btn" onclick="alert('Thanks for your feedback!')">Submit</button>
+  </div>
+</div>
+
+<!-- Modal for Editing Profile -->
+<div class="modal" id="profileModal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2>Edit Profile</h2>
+    <input type="text" id="editName" placeholder="Enter Name">
+    <input type="email" id="editEmail" placeholder="Enter Email">
+    <input type="text" id="editPhone" placeholder="Enter Phone">
+    <input type="text" id="editVehicle" placeholder="Enter Vehicle">
+    <button class="btn" onclick="saveProfile()">Save Changes</button>
+  </div>
+</div>
+
+<script>
+  function toggleSetting(settingName, value) {
+    localStorage.setItem(settingName, value);
+    console.log(`${settingName} set to: ${value}`);
+    if (settingName === 'darkMode') {
+      document.body.style.background = value 
+        ? '#000' 
+        : 'linear-gradient(135deg, #0f2027, #203a43, #2c5364)';
+    }
+  }
+
+  function changeLanguage(lang) {
+    const buttons = document.querySelectorAll('.language-select-btn');
+    buttons.forEach(button => button.classList.remove('selected'));
+    
+    const selectedButton = Array.from(buttons).find(button => button.textContent.toLowerCase() === lang);
+    selectedButton.classList.add('selected');
+    
+    // For now, just log the selected language
+    console.log('Language selected:', lang);
+    // In a real-world scenario, you would replace the page content based on the selected language
+  }
+
+  function editProfile() {
+    document.getElementById('editName').value = document.getElementById('profileName').textContent;
+    document.getElementById('editEmail').value = document.getElementById('profileEmail').textContent;
+    document.getElementById('editPhone').value = document.getElementById('profilePhone').textContent;
+    document.getElementById('editVehicle').value = document.getElementById('profileVehicle').textContent;
+    
+    document.getElementById('profileModal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('profileModal').style.display = 'none';
+  }
+
+  function saveProfile() {
+    document.getElementById('profileName').textContent = document.getElementById('editName').value;
+    document.getElementById('profileEmail').textContent = document.getElementById('editEmail').value;
+    document.getElementById('profilePhone').textContent = document.getElementById('editPhone').value;
+    document.getElementById('profileVehicle').textContent = document.getElementById('editVehicle').value;
+
+    localStorage.setItem('profileName', document.getElementById('profileName').textContent);
+    localStorage.setItem('profileEmail', document.getElementById('profileEmail').textContent);
+    localStorage.setItem('profilePhone', document.getElementById('profilePhone').textContent);
+    localStorage.setItem('profileVehicle', document.getElementById('profileVehicle').textContent);
+
+    closeModal();
+  }
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = "login.html";
+  }
+
+  function updateProfilePic(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const imgElement = document.getElementById('profileImage');
+      imgElement.src = e.target.result;
+      imgElement.classList.add('updated-glow'); // Animation effect
+
+      localStorage.setItem('profilePic', e.target.result);
+
+      setTimeout(() => {
+        imgElement.classList.remove('updated-glow');
+      }, 1000);
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+// Auto-load from localStorage on page load
+window.onload = function() {
+  const storedPic = localStorage.getItem('profilePic');
+  if (storedPic) {
+    document.getElementById('profileImage').src = storedPic;
+  }
+};
+
+  
+</script>
+
+</body>
+</html>

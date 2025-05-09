@@ -1,3 +1,4 @@
+
 const firebaseConfig = {
   apiKey: "AIzaSyB4d-b6-cjBA7MHsubkqnnYUx4RIlZa26g",
   authDomain: "fog-safty.firebaseapp.com",

@@ -18,8 +18,10 @@
   <!-- Button to toggle the camera -->
 <button id="toggleCameraBtn">Start Driver Camera</button>
 
+<button class="user-detail-btn" onclick="window.location.href='UserDetailPage.html'">👤</button>
+
 <!-- Video preview for driver -->
-<video id="driverCam" width="320" height="240" autoplay muted playsinline style="display: none;"></video>
+<video id="driverCam" autoplay muted playsinline; transform: scaleX(-1)></video>
 <!-- Drowsiness Warning Box -->
 <div id="drowsyAlertBox" class="alert-box" style="display: none;">
   ⚠️ Drowsiness Detected!
@@ -37,25 +39,23 @@
   <div id="alertBox">⚠️ WARNING: Another vehicle is within 1 KM!</div>
  
  
-  <div id="petrolInfo" style="margin-top:10px;font-weight:bold;color:#0a58ca;"></div>
-  
   <div class="floating-cards">
     <div class="card" id="speedCard">Speed: 0 km/h</div>
     <div class="card" id="coordCard">Lat: 0, Lng: 0</div>
     <div class="card" id="nearbyCard">Nearby Vehicles: 0</div>
   </div>
   <div class="floating-controls">
+    <div class="control-btn" onclick="petrolPump()">⛽</div>
+    <div class="control-btn" onclick="evcharger()">🔌</div>
     <div class="control-btn" onclick="refreshPage()">🔄</div>
     <div class="control-btn" onclick="centerMap()">📍</div>
     <div class="control-btn" onclick="toggleAlerts()">🤍</div>
-    <div class="control-btn" onclick="toggleBreakdown()">🛠️</div> <!-- NEW -->
+    <div class="control-btn" id="breakdownBtn" onclick="toggleBreakdown()">🛠️</div>
     <div class="control-btn" onclick="handleEmergency()">sos</div>
 
   </div>
 
-  <button id="findPetrolButton" onclick="handleFindPetrolPump()">
-     ⛽
-</button>
+
 
   <audio id="alertSound" src="beep.mp3" preload="auto"></audio>
 
@@ -97,9 +97,10 @@ function toggleBreakdown() {
 }
 
   </script>
-  
+ 
   <!-- Then your application script -->
   <script src="script.js"></script>
+  <script src="petrolPump.js"></script>
   <link rel="stylesheet" href="style.css">
   <script defer src="camera.js"></script>
 

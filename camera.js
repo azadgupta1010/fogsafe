@@ -7,6 +7,7 @@ document.getElementById('toggleCameraBtn').addEventListener('click', () => {
   if (!isCameraOn) {
     // Start camera
     video.style.display = 'block';
+    video.style.transform = 'scaleX(-1)';
     startDrowsyDetection();
     document.getElementById('toggleCameraBtn').textContent = 'Stop Driver Camera';
   } else {
@@ -62,7 +63,7 @@ async function startDrowsyDetection() {
   
         if (!eyesOpen) {
           if (!eyeClosedTime) eyeClosedTime = Date.now();
-          else if (Date.now() - eyeClosedTime > 3000) {
+          else if (Date.now() - eyeClosedTime > 4000) {
             // Show alert box
             const alertBox = document.getElementById('drowsyAlertBox');
             alertBox.style.display = 'block';
@@ -91,4 +92,4 @@ async function startDrowsyDetection() {
     const horizontal = Math.hypot(eye[0].x - eye[3].x, eye[0].y - eye[3].y);
     return (vertical / horizontal) > 0.25; // Adjust sensitivity if needed
   }
-  
+ 
