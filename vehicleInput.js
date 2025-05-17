@@ -9,7 +9,7 @@
     }
      setTimeout(() => {
       document.getElementById("splashScreen").style.display = "none";
-    }, 3000); // 7 seconds
+    }, 7000); // 7 seconds
 
 
 

@@ -2,6 +2,8 @@
 <html>
 <head>
   <title>Fog Road Safety</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
  
   <!-- Load Face API -->
   <script defer src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
@@ -44,7 +46,9 @@
   <div id="map"></div>
   <div id="alertBox">⚠️ WARNING: Another vehicle is within 1 KM!</div>
  
- 
+ <!-- Floating Controls Toggle Button -->
+<button id="controlsToggleBtn">☰</button>
+
   <div class="floating-cards">
     <div class="card" id="speedCard">Speed: 0 km/h</div>
     <div class="card" id="coordCard">Lat: 0, Lng: 0</div>
@@ -54,8 +58,7 @@
     <div class="control-btn" onclick="petrolPump()">⛽</div>
     <div class="control-btn" onclick="evcharger()">🔌</div>
     <div class="control-btn" onclick="refreshPage()">🔄</div>
-    <div class="control-btn" onclick="centerMap()">📍</div>
-    <div class="control-btn" onclick="toggleAlerts()">🤍</div>
+   
     <div class="control-btn" id="breakdownBtn" onclick="toggleBreakdown()">🛠️</div>
     <div class="control-btn" onclick="handleEmergency()">sos</div>
 

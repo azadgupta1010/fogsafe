@@ -12,171 +12,171 @@
     /* Root Theme Variables */
 
 /* Splash Screen Container */
-#splashScreen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100vw;
-  background-color: #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  animation: fadeOut 2s ease-in-out 3s forwards; /* Fade out after 5s */
-  overflow: hidden;
-}
 
-/* Splash Content */
-.splash-content {
-  text-align: center;
-  position: relative;
-  z-index: 1; /* Above background image */
-  animation: zoomIn 2s ease-in-out;
-}
-
-/* Fullscreen Logo */
-.splash-content img {
-width: auto;                   /* ✅ Changed from 100vw */
-  height: 100vh;                 /* ✅ Use fixed height */
-  object-fit: contain;
-  position: relative;           /* ✅ No absolute needed */
-  top: auto;
-  left: auto;
-  z-index: 1;}
-
-/* Heading Style */
-.splash-content h1 {
-  color: cyan;
-  font-size: 2.5rem;
-  font-weight: bold;
-  text-shadow: 0 0 10px #00ffff;
-   position: relative;
-      z-index: 1;
-}
-
-/* Zoom In Animation */
-@keyframes zoomIn {
-  from {
-    transform: scale(0);
-    opacity: 0;
+  /* Splash Screen */
+  #splashScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeOut 2s ease-in-out 1s forwards;
+    overflow: hidden;
   }
-  to {
-    transform: scale(1);
-    opacity: 1;
+
+  .splash-content {
+    text-align: center;
+    animation: zoomIn 0s ease-in-out;
   }
-}
 
-/* Fade Out Animation */
-@keyframes fadeOut {
-  to {
-    opacity: 0;
-    visibility: hidden;
-  }
-}
-
-    body {
-   margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-image: url('background.png');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-attachment: fixed;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 20px; /* Add padding for small devices */
-  box-sizing: border-box;
-}
-
-    .form-container {
-     background-color: rgba(0,0,0,0.6);
-  padding: 5vw;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  text-align: center;
-  width: 100%;
-  max-width: 400px;
-  box-sizing: border-box;
-    }
-
-    input {
-      padding: 12px;
-      margin: 10px 0;
-      width: 100%;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-
-    .vehicle-grid {
-      .vehicle-grid {
-     display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 15px;
-      margin: 20px 0;
-     }
-
-    }
-
-    @media screen and (max-width: 480px) {
-  .form-container {
-    padding: 6vw 4vw;
+  .splash-content img {
+    height: 100vh;
+    object-fit: contain;
   }
 
   .splash-content h1 {
-    font-size: 1.8rem;
+    color: cyan;
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px #00ffff;
+  }
+
+  @keyframes zoomIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes fadeOut {
+    to { opacity: 0; visibility: hidden; }
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-image: url('background.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    color: rgb(232, 223, 223);
+    height: 100vh;
+    overflow: hidden; /* Prevents scroll */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .form-container {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 4vh 4vw;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+    box-sizing: border-box;
+  }
+
+  input {
+    padding: 12px;
+    margin: 10px 0;
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+
+  .vehicle-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two columns */
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.vehicle-card {
+  background-color: #060616;
+  border-radius: 16px;
+  
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px; /* Fixed box height for uniformity */
+}
+.vehicle-card img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover ;
+  display: block;
+  margin: 0 auto;
+
+}
+
+
+  .vehicle-card.selected {
+    box-shadow: 0 0 15px #00ffff;
+    transform: scale(1.05);
+  }
+
+
+  @media screen and (max-width: 480px) {
+  .vehicle-grid {
+    grid-template-columns: repeat(2, 1fr); /* still two per row */
+    gap: 12px;
   }
 
   .vehicle-card {
-    padding: 10px;
+    height: 90px;
   }
 
-  input, button {
-    font-size: 14px;
-    padding: 10px;
+  .vehicle-card img {
+    width: 70%;
+    height: 70%;
   }
 }
 
-    .vehicle-card {
-      background-color: #060616;
-      border-radius: 16px;
-      padding: 15px;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-      transition: transform 0.3s, box-shadow 0.3s;
-      cursor: pointer;
+  button {
+    padding: 12px;
+    width: 100%;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: #00bcd4;
+    color: white;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #0097a7;
+  }
+
+  @media screen and (max-width: 480px) {
+    .form-container {
+      padding: 5vw;
     }
 
-    .vehicle-card.selected {
-      box-shadow: 0 0 15px #00ffff;
-      transform: scale(1.05);
+    .splash-content h1 {
+      font-size: 1.8rem;
+    }
+
+    input, button {
+      font-size: 14px;
+      padding: 10px;
     }
 
     .vehicle-card img {
-     width: 100%;
-     height: auto;
-     max-height: 120px;
-     object-fit: contain;
+      max-height: 60px;
     }
+  }
 
-    button {
-      padding: 12px;
-      width: 100%;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      background-color: #00bcd4;
-      color: white;
-      cursor: pointer;
-    }
 
-    button:hover {
-      background-color: #0097a7;
-    }
   </style>
  <script src="vehicleInput.js"></script>
 </head>

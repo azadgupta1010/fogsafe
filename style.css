@@ -1,3 +1,78 @@
+
+/* Ensure map fills screen correctly on smaller devices */
+
+
+
+@media (max-width: 768px) {
+  #map {
+    height: 70vh;
+  }
+
+  h1 {
+    font-size: 1.8em;
+    padding: 15px;
+  }
+
+  .floating-controls {
+    bottom: 20px;
+    right: 10px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .control-btn {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  #toggleCameraBtn {
+    top: auto;
+    bottom: 120px;
+    right: 10px;
+    font-size: 14px;
+    padding: 8px 14px;
+  }
+
+  .floating-cards {
+    top: auto;
+    bottom: 100px;
+    left: 10px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .floating-cards .card {
+    font-size: 13px;
+    padding: 15px 10px;
+    min-width: 110px;
+  }
+
+  .user-detail-btn {
+    top: 10px;
+    right: 10px;
+    padding: 15px;
+    font-size: 18px;
+  }
+
+  #alertBox {
+    font-size: 14px;
+    padding: 12px 24px;
+    bottom: 20px;
+  }
+
+  .alert-box {
+    padding: 15px 25px;
+    font-size: 18px;
+  }
+
+  #driverCam, #faceCanvas {
+    width: 150px;
+    height: 110px;
+    left: 10px;
+    bottom: 10px;
+  }
+}
+
 body {
   margin: 0;
   font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
@@ -88,6 +163,7 @@ h1 {
 }
 
 /* Floating Controls */
+
 .floating-controls {
   position: fixed;
   bottom: 30px;
@@ -120,16 +196,19 @@ h1 {
 #toggleCameraBtn {
   position: fixed;
   top: 150px;
+  height:50px;
+  
   right: 20px;
-  padding: 10px 20px;
+  padding: 8px 16px; /* changed from 10px 20px */
   background-color: #007BFF;
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 14px; /* changed from 16px */
   cursor: pointer;
   z-index: 1000;
 }
+
 
 /* Petrol Button */
 #findPetrolButton {
