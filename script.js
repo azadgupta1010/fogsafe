@@ -138,6 +138,11 @@ firebase.auth().onAuthStateChanged(user => {
   }
     window.initMap=initMap;
 
+    // Optionally remove the splash element after animation
+    setTimeout(() => {
+      document.getElementById("splashScreen").style.display = "none";
+    }, 7000); // 7 seconds
+
     
 
   function initializeMap(location) {
@@ -316,74 +321,17 @@ firebase.auth().onAuthStateChanged(user => {
   };
 
   // Initialize the map after all checks
+
   initMap();
  });
 
- async function startVideoAndDetect() {
-    await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
-    await faceapi.nets.faceLandmark68Net.loadFromUri('/models');
-  
-    const video = document.getElementById('videoFeed');
-    navigator.mediaDevices.getUserMedia({ video: {} })
-      .then(stream => video.srcObject = stream);
-  
-    video.addEventListener('play', () => monitorEyes(video));
-  }
+
   
 
 // Initialize the application when window loads
 window.onload = () => {
     console.log("Window loaded, waiting for Firebase auth...");
-    startVideoAndDetect();
-    let eyesClosedCounter = 0;
-
-async function monitorEyes(video) {
-  const alertDiv = document.getElementById('drowsyAlert');
-  const beep = document.getElementById('drowsyBeep');
-
-  setInterval(async () => {
-    const result = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
-      .withFaceLandmarks();
-
-    if (result) {
-      const landmarks = result.landmarks;
-      const leftEye = landmarks.getLeftEye();
-      const rightEye = landmarks.getRightEye();
-      
-      const isClosed = areEyesClosed(leftEye, rightEye);
-
-      if (isClosed) {
-        eyesClosedCounter++;
-        if (eyesClosedCounter > 15) {
-          alertDiv.style.display = 'block';
-          if (beep.paused) beep.play();
-        }
-      } else {
-        eyesClosedCounter = 0;
-        alertDiv.style.display = 'none';
-        beep.pause();
-        beep.currentTime = 0;
-      }
-    }
-  }, 200);
-}
-
-function areEyesClosed(leftEye, rightEye) {
-  const eyeAspectRatio = (eye) => {
-    const a = distance(eye[1], eye[5]);
-    const b = distance(eye[2], eye[4]);
-    const c = distance(eye[0], eye[3]);
-    return (a + b) / (2.0 * c);
-  };
-  return (eyeAspectRatio(leftEye) + eyeAspectRatio(rightEye)) / 2 < 0.22;
-}
-
-function distance(p1, p2) {
-  return Math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2);
-}
-
-  // This will trigger the auth check and subsequent initialization
-
+   
 
 
 
@@ -410,3 +358,5 @@ function evcharger() {
 
 
 
+
+   

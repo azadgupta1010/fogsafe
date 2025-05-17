@@ -19,3 +19,7 @@ try {
       console.error('Firebase initialization error', err.stack);
   }
 }
+
+// Optional if you plan to use these in other scripts
+const auth = firebase.auth();
+const db = firebase.firestore();

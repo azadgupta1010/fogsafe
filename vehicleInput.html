@@ -1,35 +1,107 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script src="firebaseConfig.js"></script>
   <title>Enter Vehicle Info</title>
   <style>
+
+    /* Root Theme Variables */
+
+/* Splash Screen Container */
+#splashScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeOut 2s ease-in-out 3s forwards; /* Fade out after 5s */
+  overflow: hidden;
+}
+
+/* Splash Content */
+.splash-content {
+  text-align: center;
+  position: relative;
+  z-index: 1; /* Above background image */
+  animation: zoomIn 2s ease-in-out;
+}
+
+/* Fullscreen Logo */
+.splash-content img {
+width: auto;                   /* ✅ Changed from 100vw */
+  height: 100vh;                 /* ✅ Use fixed height */
+  object-fit: contain;
+  position: relative;           /* ✅ No absolute needed */
+  top: auto;
+  left: auto;
+  z-index: 1;}
+
+/* Heading Style */
+.splash-content h1 {
+  color: cyan;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-shadow: 0 0 10px #00ffff;
+   position: relative;
+      z-index: 1;
+}
+
+/* Zoom In Animation */
+@keyframes zoomIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Fade Out Animation */
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
     body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-image: url('background.png');
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center center;
-      background-attachment: fixed;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
+   margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-image: url('background.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px; /* Add padding for small devices */
+  box-sizing: border-box;
+}
 
     .form-container {
-      background-color: rgba(0,0,0,0.6);
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      text-align: center;
-      width: 90%;
-      max-width: 400px;
+     background-color: rgba(0,0,0,0.6);
+  padding: 5vw;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
     }
 
     input {
@@ -42,11 +114,33 @@
     }
 
     .vehicle-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      .vehicle-grid {
+     display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
       gap: 15px;
       margin: 20px 0;
+     }
+
     }
+
+    @media screen and (max-width: 480px) {
+  .form-container {
+    padding: 6vw 4vw;
+  }
+
+  .splash-content h1 {
+    font-size: 1.8rem;
+  }
+
+  .vehicle-card {
+    padding: 10px;
+  }
+
+  input, button {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
 
     .vehicle-card {
       background-color: #060616;
@@ -63,8 +157,10 @@
     }
 
     .vehicle-card img {
-      width: 100%;
-      height: auto;
+     width: 100%;
+     height: auto;
+     max-height: 120px;
+     object-fit: contain;
     }
 
     button {
@@ -82,63 +178,35 @@
       background-color: #0097a7;
     }
   </style>
+ <script src="vehicleInput.js"></script>
 </head>
 <body>
+<div id="splashScreen">
+    <div class="splash-content">
+      <img src="logo.png" alt="Safe Raahi Logo">
+    </div>
+  </div>
+
   <div class="form-container">
     <h2>Vehicle Information</h2>
     <input type="text" id="vehicleNumber" placeholder="Vehicle Number (HR 35 V 8754)" required>
 
     <div class="vehicle-grid" id="vehicleGrid">
       <div class="vehicle-card" onclick="selectVehicle('car', this)">
-        <img src="images/car1.png" alt="Car">
+        <img src="car.jpeg" alt="Car">
       </div>
       <div class="vehicle-card" onclick="selectVehicle('bus', this)">
-        <img src="images/bus.png" alt="Bus">
+        <img src="bus.jpeg" alt="Bus">
       </div>
       <div class="vehicle-card" onclick="selectVehicle('truck', this)">
-        <img src="images/truck.png" alt="Truck">
+        <img src="truck.jpeg" alt="Truck">
       </div>
       <div class="vehicle-card" onclick="selectVehicle('bike', this)">
-        <img src="images/bike.png" alt="Bike">
+        <img src="/bike.jpeg" alt="Bike">
       </div>
     </div>
 
     <button onclick="submitVehicleInfo()">Submit</button>
   </div>
-
-
-  
-
-  <script>
-    let selectedType = "";
-
-    function selectVehicle(type, element) {
-      selectedType = type;
-      const cards = document.querySelectorAll(".vehicle-card");
-      cards.forEach(card => card.classList.remove("selected"));
-      element.classList.add("selected");
-    }
-
-    function submitVehicleInfo() {
-      const number = document.getElementById('vehicleNumber').value.trim();
-
-      if (!number || !selectedType) {
-        alert("Please enter all fields!");
-        return;
-      }
-
-      localStorage.setItem('vehicleNumber', number);
-      localStorage.setItem('vehicleType', selectedType);
-
-      window.location.href = "index.html";
-    }
-  </script>
-
-  <script>
-    // Firebase Auth check
-    firebase.auth().onAuthStateChanged(user => {
-      if (!user) window.location.href = "login.html";
-    });
-  </script>
 </body>
 </html>

@@ -1,5 +1,4 @@
 body {
-      
   margin: 0;
   font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
   background: linear-gradient(45deg, #0b1a20, #11232b);
@@ -24,6 +23,7 @@ h1 {
   position: relative;
 }
 
+/* Alert Box */
 #alertBox {
   position: fixed;
   bottom: -100px;
@@ -53,6 +53,7 @@ h1 {
   animation: pulse 1.5s infinite;
 }
 
+/* Overlay */
 .map-overlay {
   position: absolute;
   top: 20px;
@@ -63,6 +64,7 @@ h1 {
   z-index: 1000;
 }
 
+/* Loading screen */
 .loading-screen {
   position: fixed;
   top: 0;
@@ -85,21 +87,7 @@ h1 {
   animation: spin 1s linear infinite;
 }
 
-@keyframes titleGlow {
-  from { text-shadow: 0 0 10px rgba(0, 188, 212, 0.5); }
-  to { text-shadow: 0 0 25px rgba(0, 188, 212, 0.8); }
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
+/* Floating Controls */
 .floating-controls {
   position: fixed;
   bottom: 30px;
@@ -123,59 +111,12 @@ h1 {
   box-shadow: 0 8px 25px rgba(0, 188, 212, 0.5);
 }
 
-.floating-cards {
-position: absolute;
-top: 150px;
-left: 10px;
-z-index: 1000;
-display: flex;
-flex-direction: column;
-gap: 10px;
-animation: slideIn 1s ease-out forwards;
-opacity: 0;
-}
-
-.floating-cards .card {
-padding: 20px 15px;
-background-color: rgba(0, 0, 0, 0.6);
-color: white;
-border-radius: 10px;
-font-size: 14px;
-min-width: 130px;
-box-shadow: 0 4px 12px rgba(45, 12, 146, 0.4);
-transition: transform 0.3s ease, background-color 0.3s ease;
-transform: translateY(5px);
-}
-
-.floating-cards .card:hover {
-transform: translateY(-3px) scale(1.02);
-background-color: rgba(0, 0, 0, 0.8);
-}
-
-body.light-mode .floating-cards .card {
-background-color: rgba(255, 255, 255, 0.9);
-color: black;
-}
-
-body.light-mode .floating-cards .card:hover {
-background-color: #ffffff;
-}
-
-/* Slide-in animation */
-@keyframes slideIn {
-0% {
-opacity: 0;
-transform: translateX(-30px);
-}
-100% {
-opacity: 1;
-transform: translateX(0);
-}
-}
 .control-btn:last-child {
-background-color: #e53935 !important;
-color: white;
+  background-color: #e53935 !important;
+  color: white;
 }
+
+/* Toggle Camera Button */
 #toggleCameraBtn {
   position: fixed;
   top: 150px;
@@ -190,7 +131,29 @@ color: white;
   z-index: 1000;
 }
 
+/* Petrol Button */
+#findPetrolButton {
+  position: fixed;
+  bottom: 30px;
+  right: 370px;
+  background-color: #06b6e6;
+  color: white;
+  border: none;
+  padding: 15px 20px;
+  font-size: 16px;
+  border-radius: 50px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
 
+#findPetrolButton:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+/* Alert Blink */
 .alert-box {
   position: fixed;
   top: 20%;
@@ -212,64 +175,41 @@ color: white;
   100% { opacity: 1; }
 }
 
-#findPetrolButton {
+/* Camera & Canvas */
+#driverCam, #faceCanvas {
   position: fixed;
-  bottom: 30px; /* Distance from the bottom of the screen */
-  right: 370px; /* Distance from the right of the screen */
-  background-color: #06b6e6; /* Button color */
-  color: white; /* Text color */
-  border: none; /* Remove border */
-  padding: 15px 20px; /* Padding inside the button */
-  font-size: 16px; /* Font size */
-  border-radius: 50px; /* Rounded corners */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Slight shadow for floating effect */
-  cursor: pointer; /* Pointer cursor on hover */
-  z-index: 1000; /* Ensure button is above other content */
-  transition: all 0.3s ease; /* Smooth transition */
+  bottom: 20px;
+  left: 20px;
+  width: 200px;
+  height: 150px;
+  border-radius: 10px;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* Hover effect to make the button pop out a bit */
-#findPetrolButton:hover {
-  background-color: #0056b3; /* Darker blue on hover */
-  transform: scale(1.05); /* Slightly bigger button on hover */
+#driverCam {
+  display: none;
+  background-color: #fff;
 }
 
+#faceCanvas {
+  z-index: 1001;
+  pointer-events: none;
+}
 
-  #driverCam {
-    display: none;
-    width: 200px;
-    height: 150px;
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    background-color: #fff;
+/* Responsive Camera */
+@media (max-width: 600px) {
+  #driverCam, #faceCanvas {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    bottom: 10px;
+    left: 10px;
   }
+}
 
-  /* For smaller screens (smartphones in portrait mode) */
-  @media (max-width: 600px) {
-    #driverCam {
-      width: 100%;
-      max-width: 200px;
-      height: auto;
-      bottom: 10px;
-      left: 10px;
-    }
-  }
-
-  /* For larger screens (landscape or tablets) */
-  @media (min-width: 601px) {
-    #driverCam {
-      width: 200px;
-      height: 150px;
-      bottom: 20px;
-      left: 20px;
-    }
-  }
-
-  #findPetrolBtn{
+/* Petrol Shortcut Button */
+#findPetrolBtn {
   position: fixed;
   bottom: 90px;
   left: 20px;
@@ -279,56 +219,100 @@ color: white;
   color: white;
   border: none;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* User Profile Button */
+.user-detail-btn {
+  background: rgba(4, 138, 142, 0.148);
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  z-index: 1000;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 20px rgba(10, 171, 171, 0.1);
+  backdrop-filter: blur(0px);
+  color: white;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.user-detail-btn:hover {
+  background-color: #0097a7;
+}
+
+.profile-picture {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+/* Floating Info Cards */
+.floating-cards {
+  position: absolute;
+  top: 150px;
+  left: 10px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: slideIn 1s ease-out forwards;
+  opacity: 0;
+}
+
+.floating-cards .card {
+  padding: 20px 15px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border-radius: 10px;
+  font-size: 14px;
+  min-width: 130px;
+  box-shadow: 0 4px 12px rgba(45, 12, 146, 0.4);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  transform: translateY(5px);
+}
+
+.floating-cards .card:hover {
+  transform: translateY(-3px) scale(1.02);
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Light Mode */
+body.light-mode .floating-cards .card {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: black;
+}
+
+body.light-mode .floating-cards .card:hover {
+  background-color: #ffffff;
+}
+
+/* Animations */
+@keyframes titleGlow {
+  from { text-shadow: 0 0 10px rgba(0, 188, 212, 0.5); }
+  to { text-shadow: 0 0 25px rgba(0, 188, 212, 0.8); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
   }
-
-  .user-detail-btn {
-    background: rgba(4, 138, 142, 0.148); /* Semi-transparent dark background */
-     
-    position: fixed;
-    top: 15px;
-    right: 15px;
-    z-index: 1000;
-    border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 0 20px rgba(10, 171, 171, 0.1);
-      backdrop-filter: blur(0px);
-    color: white;
-    border: none;
-    padding: 10px 14px;
-    border-radius: 50%;
-    font-size: 20px;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  100% {
+    opacity: 1;
+    transform: translateX(0);
   }
-  
-  .user-detail-btn:hover {
-    background-color: #0097a7;
-  
-  }
-  .profile-picture {
-    width: 30px; /* Adjust size as needed */
-    height: 30px;
-    border-radius: 50%; /* Make it a circle */
-  }
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
+}

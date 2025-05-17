@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>EV Charging Station </title>
   <style>
-    :root {
+:root {
       --primary-color: #0ff; /* Neon cyan */
       --accent-color: #00f5ff;
       --bg-gradient: linear-gradient(135deg, #000, #0a0a0a);
@@ -25,6 +25,9 @@
       background-position: center center;
       background-attachment: fixed;
       color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
   
     /* Optional: Overlay to improve readability */
@@ -35,45 +38,65 @@
     }
 
     .top-bar {
-      position: relative;
-      display: flex;
-      align-items: center;
-      height: 50px;
-      background: rgba(0,0,0,0.6);
-    }
-    .back-btn {
-      position: absolute;
-      left: 12px;
-      background: #1f1f1f;
-      color: #00ffff;
-      border: 2px solid #00ffff;
-      padding: 6px 12px;
-      font-size: 0.9em;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.2s;
-    }
-    .back-btn:hover {
-      background: #00ffff;
-      color: #0a0a0a;
-      transform: scale(1.05);
-    }
-    .header {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 1.2em;
-      color: var(--primary-color);
-      font-weight: bold;
-    }
+  height: 50px;
+  background: rgba(0,0,0,0.6);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* keep header centered */
+  padding-left: 60px; /* enough space for fixed back button */
+  padding-right: 60px; /* to balance layout */
+}
+.top-bar {
+  height: 50px;
+  background: rgba(0,0,0,0.6);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 60px;
+  padding-right: 60px;
+}
+
+.back-btn {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  background: #1f1f1f;
+  color: #00ffff;
+  border: 2px solid #00ffff;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  z-index: 10000;
+  box-shadow: 0 0 6px #00ffffaa;
+}
+
+.back-btn:hover {
+  background: #00ffff;
+  color: #0a0a0a;
+  transform: scale(1.1);
+}
+
+.header {
+  margin: 0 auto;
+  font-size: 1.3em;
+  color: var(--primary-color);
+  font-weight: bold;
+  text-align: center;
+  user-select: none;
+  pointer-events: none;
+}
+
 
     #map {
       height: 45vh;
       width: 100%;
       filter: grayscale(20%) brightness(80%) contrast(110%);
+      flex-shrink: 0;
     }
-
-    
 
     .controls {
       background: var(--panel-bg);
@@ -84,6 +107,10 @@
       box-shadow: 0 4px 12px rgba(0, 255, 255, 0.3);
       border-radius: 8px;
       border: 1px solid var(--border-color);
+      max-width: 600px;
+      margin: 20px auto 80px auto; /* leave room for bottom panel */
+      box-sizing: border-box;
+      width: 90%;
     }
 
     .control-group {
@@ -96,11 +123,15 @@
     .control-group label {
       font-size: 18px;
       color: var(--text-color);
+      user-select: none;
+      flex: 1 1 auto;
+      padding-right: 10px;
     }
 
     .control-group input[type="range"] {
       width: 200px;
       accent-color: var(--primary-color);
+      flex-shrink: 0;
     }
 
     .control-group input[type="range"]::-webkit-slider-thumb {
@@ -120,6 +151,9 @@
 
     .control-group input[type="checkbox"] {
       accent-color: var(--primary-color);
+      cursor: pointer;
+      margin-right: 8px;
+      flex-shrink: 0;
     }
 
     button {
@@ -133,6 +167,10 @@
       box-shadow: 0 0 10px var(--glow-color), 0 0 10px var(--glow-color);
       transition: background 0.3s, transform 0.3s;
       font-size: 15px;
+      width: fit-content;
+      align-self: center;
+      min-width: 160px;
+      user-select: none;
     }
 
     button:hover {
@@ -149,9 +187,12 @@
       overflow-y: auto;
       background: var(--panel-bg);
       border-top: 3px solid var(--primary-color);
-      padding: 15px;
+      padding: 15px 20px;
       color: var(--text-color);
       border-radius: 12px 12px 0 0;
+      box-sizing: border-box;
+      font-size: 14px;
+      z-index: 1000;
     }
 
     .station {
@@ -161,6 +202,7 @@
       box-shadow: 0 4px 6px rgba(0, 255, 255, 0.2);
       margin-bottom: 15px;
       transition: transform 0.3s, box-shadow 0.3s;
+      cursor: default;
     }
 
     .station:hover {
@@ -172,17 +214,36 @@
       margin: 0 0 10px;
       color: var(--primary-color);
       text-shadow: 0 0 5px var(--glow-color);
+      word-break: break-word;
     }
 
     .station p {
       margin: 5px 0;
       font-size: 14px;
       color: #ccc;
+      word-break: break-word;
+    }
+
+    @media (max-width: 900px) {
+      #map {
+        height: 40vh;
+      }
+      .controls {
+        max-width: 90%;
+        padding: 15px;
+        margin: 15px auto 80px auto;
+      }
+      .control-group input[type="range"] {
+        width: 150px;
+      }
     }
 
     @media (max-width: 600px) {
       .controls {
         font-size: 14px;
+        padding: 15px 12px;
+        margin: 15px auto 80px auto;
+        width: 95%;
       }
 
       .control-group {
@@ -190,12 +251,45 @@
         align-items: flex-start;
       }
 
+      .control-group label {
+        padding-right: 0;
+        margin-bottom: 6px;
+        font-size: 16px;
+      }
+
+      .control-group input[type="range"] {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .control-group input[type="checkbox"] {
+        margin-bottom: 8px;
+      }
+
       button {
         width: 100%;
+        font-size: 16px;
+        min-width: unset;
       }
 
       #map {
         height: 50vh;
+      }
+
+      .bottom-panel {
+        max-height: 40vh;
+        font-size: 13px;
+        padding: 10px 15px;
+      }
+    }
+
+    @media (max-height: 500px) {
+      #map {
+        height: 35vh !important;
+      }
+      .bottom-panel {
+        max-height: 25vh !important;
       }
     }
   </style>
@@ -209,8 +303,7 @@
 
 
     <div class="top-bar">
-        <button class="back-btn" onclick="window.location.href='index.html'">← Back</button>
-        <div class="header">🔌 Charging Station</div>
+         <div class="header">🔌 Charging Station</div>
       </div><div id="map"></div>
 
  

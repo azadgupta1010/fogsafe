@@ -12,23 +12,29 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+ <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script src="firebaseConfig.js"></script>
+
+  <script src="db.js"></script>
 </head>
 <body>
   <!-- Button to toggle the camera -->
-<button id="toggleCameraBtn">Start Driver Camera</button>
 
 <button class="user-detail-btn" onclick="window.location.href='UserDetailPage.html'">👤</button>
+<!-- Video feed -->
+<video id="driverCam" width="320" height="240" autoplay muted playsinline style="display: none;"></video>
 
-<!-- Video preview for driver -->
-<video id="driverCam" autoplay muted playsinline; transform: scaleX(-1)></video>
-<!-- Drowsiness Warning Box -->
+<!-- Alert Box -->
 <div id="drowsyAlertBox" class="alert-box" style="display: none;">
   ⚠️ Drowsiness Detected!
 </div>
 
 <!-- Beep Sound -->
 <audio id="drowsyBeep" src="beep.mp3" preload="auto"></audio>
+
+<!-- Toggle Button -->
+<button id="toggleCameraBtn">Start Driver Camera</button>
+
 
   <div class="loading-screen" id="loadingScreen">
     <div class="loader"></div>
@@ -57,7 +63,7 @@
 
 
 
-  <audio id="alertSound" src="beep.mp3" preload="auto"></audio>
+  <audio id="alertSound" src="beep2.mp3" preload="auto"></audio>
 
   <!-- Load Google Maps API first -->
   <script async defer 
@@ -102,7 +108,7 @@ function toggleBreakdown() {
   <script src="script.js"></script>
   <script src="petrolPump.js"></script>
   <link rel="stylesheet" href="style.css">
-  <script defer src="camera.js"></script>
+  <script src="camera.js"></script>
 
 </body>
 </html>

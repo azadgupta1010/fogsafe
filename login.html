@@ -6,45 +6,7 @@
   <title>Login – Safe Raahi</title>
   <style>
 
-#splashScreen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  background-color: #000; /* or any background you want */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  animation: fadeOut 1s ease-in-out 2s forwards;
-}
 
-.splash-content {
-  text-align: center;
-  animation: zoomIn 1s ease-in-out;
-}
-
-.splash-content img {
-  width: 100px;
-  margin-bottom: 20px;
-}
-
-.splash-content h1 {
-  color: cyan;
-  font-size: 28px;
-  font-weight: bold;
-  text-shadow: 0 0 10px #00ffff;
-}
-
-@keyframes zoomIn {
-  from { transform: scale(0); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-@keyframes fadeOut {
-  to { opacity: 0; visibility: hidden; }
-}
 
     :root {
       --cyan: #00bcd4;
@@ -119,9 +81,13 @@
     }
 
     .input-icon {
-      position: absolute; top: 50%; left: 0.8rem;
+      position: absolute;
+       top: 50%;
+        left: 0.8rem;
       transform: translateY(-50%);
-      width: 1.2rem; height: 1.2rem; fill: rgba(255,255,255,0.5);
+      width: 1.2rem;
+       height: 1.2rem;
+        fill: rgba(255,255,255,0.5);
     }
 
     .error-message {
@@ -148,10 +114,16 @@
     }
 
     .loader {
-      width: 1.2rem; height: 1.2rem;
-      border: 3px solid white; border-bottom-color: transparent;
-      border-radius: 50%; animation: spin 1s linear infinite;
-      position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
+        width: 1.2rem;
+      height: 1.2rem;
+      border: 3px solid white;
+      border-bottom-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
       display: none;
     }
 
@@ -171,6 +143,7 @@
     .redirect a:hover {
       text-shadow: 0 0 10px rgba(0,188,212,0.5);
     }
+
   </style>
 
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -179,13 +152,6 @@
 </head>
 <body>
 
-  
-  <div id="splashScreen">
-    <div class="splash-content">
-      <img src="logo.jpeg" alt="Logo">
-      <h1>Safe Raahi</h1>
-    </div>
-  </div>
   
   <div class="overlay"></div>
 
@@ -211,53 +177,18 @@
 
     <p class="redirect">Don't have an account? <a href="register.html">Register here</a></p>
   </div>
-
-  <script>
-    const loginBtn = document.getElementById("loginBtn");
-    const loader = document.getElementById("buttonLoader");
-    const buttonText = document.getElementById("buttonText");
-    const errorDisplay = document.getElementById("loginError");
-
-    function login() {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-
-      if (!email || !password) {
-        errorDisplay.textContent = "Please fill in both fields.";
-        errorDisplay.style.display = "block";
-        return;
-      }
-
-      loginBtn.disabled = true;
-      loader.style.display = "inline-block";
-      buttonText.style.opacity = "0.5";
-
-      firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(() => {
-          window.location.href = "vehicleInput.html";
-        })
-        .catch(error => {
-          errorDisplay.textContent = error.message;
-          errorDisplay.style.display = "block";
-        })
-        .finally(() => {
-          loginBtn.disabled = false;
-          loader.style.display = "none";
-          buttonText.style.opacity = "1";
-        });
-    }
-
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) window.location.href = "vehicleInput.html";
-    });
-  </script>
-
-  <script>
-    // Optionally remove the splash element after animation
-    setTimeout(() => {
-      document.getElementById("splashScreen").style.display = "none";
-    }, 3000); // 3 seconds
-  </script>
-  
+<script src="login.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+

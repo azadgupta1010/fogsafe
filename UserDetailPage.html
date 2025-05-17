@@ -243,7 +243,33 @@
     }
 
    
-  
+  .input-field {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 16px;
+  background-color: rgba(0, 0, 0, 0.8);
+ color: white; /* ✅ Added this line */
+}
+
+.btn {
+  padding: 10px 20px;
+  background: #2196f3;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background: #0b7dda;
+}
+
     
 
     .modal {
@@ -260,7 +286,8 @@
     }
 
     .modal-content {
-      background-color: #222;
+      background-color:rgba(0, 0, 0, 0.8);
+     
       padding: 20px;
       border-radius: 10px;
       max-width: 400px;
@@ -291,6 +318,13 @@
     }
 
   </style>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="firebaseConfig.js"></script>
+  <script src="UserDetailPage.js"></script>
+</head>
 </head>
 <body>
 
@@ -361,7 +395,7 @@
   </div>
   
 
-  <!-- Trip History -->
+  <!-- Trip History 
   <div class="card">
     <h2>🧭 Trip History</h2>
     <ul>
@@ -369,7 +403,7 @@
       <li>Agra → Jaipur (3 hrs 40 mins)</li>
       <li>Jaipur → Delhi (4 hrs)</li>
     </ul>
-  </div>
+  </div>-->
 
   <!-- Help Section -->
   <div class="card">
@@ -394,10 +428,12 @@
   <div class="card">
     <h2>📝 Feedback</h2>
     <p>Tell us how we can improve!</p>
-    <textarea rows="4" placeholder="Your feedback..."></textarea>
-    <button class="btn" onclick="alert('Thanks for your feedback!')">Submit</button>
-  </div>
+    <input type="text" id="feedbackName" placeholder="Your Name" class="input-field" />
+  <input type="email" id="feedbackEmail" placeholder="Your Email" class="input-field" />
+  <textarea rows="4" id="feedbackMessage" placeholder="Your feedback..." class="input-field"></textarea>
+  <button class="btn" onclick="submitFeedback()">Submit</button>
 </div>
+
 
 <!-- Modal for Editing Profile -->
 <div class="modal" id="profileModal">
@@ -412,90 +448,7 @@
   </div>
 </div>
 
-<script>
-  function toggleSetting(settingName, value) {
-    localStorage.setItem(settingName, value);
-    console.log(`${settingName} set to: ${value}`);
-    if (settingName === 'darkMode') {
-      document.body.style.background = value 
-        ? '#000' 
-        : 'linear-gradient(135deg, #0f2027, #203a43, #2c5364)';
-    }
-  }
 
-  function changeLanguage(lang) {
-    const buttons = document.querySelectorAll('.language-select-btn');
-    buttons.forEach(button => button.classList.remove('selected'));
-    
-    const selectedButton = Array.from(buttons).find(button => button.textContent.toLowerCase() === lang);
-    selectedButton.classList.add('selected');
-    
-    // For now, just log the selected language
-    console.log('Language selected:', lang);
-    // In a real-world scenario, you would replace the page content based on the selected language
-  }
-
-  function editProfile() {
-    document.getElementById('editName').value = document.getElementById('profileName').textContent;
-    document.getElementById('editEmail').value = document.getElementById('profileEmail').textContent;
-    document.getElementById('editPhone').value = document.getElementById('profilePhone').textContent;
-    document.getElementById('editVehicle').value = document.getElementById('profileVehicle').textContent;
-    
-    document.getElementById('profileModal').style.display = 'flex';
-  }
-
-  function closeModal() {
-    document.getElementById('profileModal').style.display = 'none';
-  }
-
-  function saveProfile() {
-    document.getElementById('profileName').textContent = document.getElementById('editName').value;
-    document.getElementById('profileEmail').textContent = document.getElementById('editEmail').value;
-    document.getElementById('profilePhone').textContent = document.getElementById('editPhone').value;
-    document.getElementById('profileVehicle').textContent = document.getElementById('editVehicle').value;
-
-    localStorage.setItem('profileName', document.getElementById('profileName').textContent);
-    localStorage.setItem('profileEmail', document.getElementById('profileEmail').textContent);
-    localStorage.setItem('profilePhone', document.getElementById('profilePhone').textContent);
-    localStorage.setItem('profileVehicle', document.getElementById('profileVehicle').textContent);
-
-    closeModal();
-  }
-
-  function logout() {
-    localStorage.clear();
-    window.location.href = "login.html";
-  }
-
-  function updateProfilePic(event) {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const imgElement = document.getElementById('profileImage');
-      imgElement.src = e.target.result;
-      imgElement.classList.add('updated-glow'); // Animation effect
-
-      localStorage.setItem('profilePic', e.target.result);
-
-      setTimeout(() => {
-        imgElement.classList.remove('updated-glow');
-      }, 1000);
-    };
-    reader.readAsDataURL(file);
-  }
-}
-
-// Auto-load from localStorage on page load
-window.onload = function() {
-  const storedPic = localStorage.getItem('profilePic');
-  if (storedPic) {
-    document.getElementById('profileImage').src = storedPic;
-  }
-};
-
-  
-</script>
 
 </body>
 </html>
