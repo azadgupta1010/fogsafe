@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Safe Raahi - Home</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0e1c2f;
+      color: #ffffff;
+    }
+
+    .container {
+      padding: 1rem;
+    }
+
+    .greeting {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .vehicle-tag {
+      background: #1f3a5f;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      color: #a0e9ff;
+      font-weight: bold;
+    }
+
+    .grid-menu {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .menu-item {
+      background: #182b45;
+      border-radius: 15px;
+      text-align: center;
+      padding: 1rem 0.5rem;
+      color: #ffffff;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .menu-item:hover {
+      background: #264d73;
+    }
+
+    .menu-item img {
+      width: 32px;
+      margin-bottom: 0.5rem;
+    }
+
+    .menu-item span {
+      display: block;
+      font-size: 0.85rem;
+    }
+
+    .info-box {
+      background: #1c3c5f;
+      border-left: 4px solid #00f0ff;
+      padding: 1rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      color: #dffcff;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #142840;
+      display: flex;
+      justify-content: space-around;
+      padding: 0.5rem 0;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+    }
+
+    .bottom-nav a {
+      color: #ccc;
+      text-decoration: none;
+      text-align: center;
+      font-size: 0.75rem;
+    }
+
+    .bottom-nav a.active,
+    .bottom-nav a:hover {
+      color: #00f0ff;
+    }
+
+    .bottom-nav img {
+      width: 24px;
+      margin-bottom: 4px;
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "your-api-key",
+      authDomain: "your-project.firebaseapp.com",
+      projectId: "your-project-id",
+      appId: "your-app-id"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="greeting">
+      <span id="welcomeUser">Welcome, User!</span>
+      <div class="vehicle-tag">Carens-8754 🚗</div>
+    </div>
+
+    <div class="grid-menu">
+      <a href="track.html" class="menu-item"><img src="icons/track.png"><span>Live Tracking</span></a>
+      <a href="emergency.html" class="menu-item"><img src="icons/emergency.png"><span>Emergency</span></a>
+      <a href="charging.html" class="menu-item"><img src="icons/ev.png"><span>EV Chargers</span></a>
+      <a href="petrol.html" class="menu-item"><img src="icons/petrol.png"><span>Petrol Nearby</span></a>
+      <a href="drowsy.html" class="menu-item"><img src="icons/drowsy.png"><span>Drowsy Alert</span></a>
+      <a href="profile.html" class="menu-item"><img src="icons/profile.png"><span>Profile</span></a>
+      <a href="settings.html" class="menu-item"><img src="icons/settings.png"><span>Settings</span></a>
+      <a href="more.html" class="menu-item"><img src="icons/more.png"><span>More</span></a>
+    </div>
+
+    <div class="info-box">
+      <p>Stay safe this fog season! Use Safe Raahi to avoid collisions and alert help fast.</p>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="#" class="active"><img src="icons/home.png"><span>Home</span></a>
+    <a href="alerts.html"><img src="icons/alert.png"><span>Alerts</span></a>
+    <a href="community.html"><img src="icons/community.png"><span>Community</span></a>
+    <a href="profile.html"><img src="icons/user.png"><span>Profile</span></a>
+  </nav>
+</body>
+</html>
