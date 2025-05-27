@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Register – Safe Raahi</title>
+  
+  <!-- Firebase App (core) SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<!-- Firebase Authentication SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
   <style>
     :root {
       --cyan: #00bcd4;
@@ -87,22 +93,91 @@
       transform: scale(1.1);
     }
 
-    button { width:100%; padding:0.9rem; background:linear-gradient(135deg,var(--cyan),var(--cyan-dark)); color:white; font-weight:600; border:none; border-radius:8px; cursor:pointer; position:relative; overflow:hidden; transition:transform 0.3s, box-shadow 0.3s; }
-    button:hover { transform:translateY(-2px); box-shadow:0 5px 15px rgba(0,188,212,0.4); }
-    .loader { width:1.2rem; height:1.2rem; border:3px solid white; border-bottom-color:transparent; border-radius:50%; animation:spin 1s linear infinite; position:absolute; right:1rem; top:50%; transform:translateY(-50%); display:none; }
-    @keyframes spin { to { transform:rotate(360deg); } }
+   button { 
+  width: 100%; 
+  padding: 0.9rem; 
+  background: linear-gradient(135deg, var(--cyan), var(--cyan-dark)); 
+  color: white; 
+  font-weight: 600; 
+  border: none; 
+  border-radius: 8px; 
+  cursor: pointer; 
+  position: relative; 
+  overflow: hidden; 
+  transition: transform 0.3s, box-shadow 0.3s; 
+}
+button:hover { 
+  transform: translateY(-2px); 
+  box-shadow: 0 5px 15px rgba(0,188,212,0.4); 
+}
+.loader { 
+  width: 1.2rem; 
+  height: 1.2rem; 
+  border: 3px solid white; 
+  border-bottom-color: transparent; 
+  border-radius: 50%; 
+  animation: spin 1s linear infinite; 
+  position: absolute; 
+  right: 1rem; 
+  top: 50%; 
+  transform: translateY(-50%); 
+  display: none; 
+}
+@keyframes spin { 
+  to { transform: rotate(360deg); } 
+}
 
-    .social-login { display:flex; justify-content:center; gap:1rem; margin-top:1.5rem; }
-    .social-btn { flex:1; text-align:center; padding:0.6rem; border-radius:8px; color:white; cursor:pointer; }
-    .social-btn:nth-child(1) { background:#4285F4; }
-    .social-btn:nth-child(2) { background:#3B5998; }
+.social-login { 
+  display: flex; 
+  justify-content: center; 
+  gap: 1rem; 
+  margin-top: 1.5rem; 
+}
+.social-btn { 
+  flex: 1; 
+  text-align: center; 
+  padding: 0.6rem; 
+  border-radius: 8px; 
+  color: white; 
+  cursor: pointer; 
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+/* Google */
+.social-btn:nth-child(1) { 
+  background: #4285F4; 
+}
+.social-btn:nth-child(1):hover {
+  background: #357ae8;
+}
+/* Facebook */
+.social-btn:nth-child(2) { 
+  background: #3B5998; 
+}
+.social-btn:nth-child(2):hover {
+  background: #2d4373;
+}
+/* GitHub */
+.social-btn:nth-child(3) {
+  background: #333; /* GitHub dark gray */
+}
+.social-btn:nth-child(3):hover {
+  background: #24292e; /* GitHub darker hover */
+}
 
-    @media (max-width:480px) { .form-container { padding:1.5rem; } }
-  </style>
+@media (max-width:480px) { 
+  .form-container { 
+    padding: 1.5rem; 
+  } 
+}
+</style>
+
+  
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script src="firebaseConfig.js"></script>
-   <script src="register.js"></script>
+  <script src="register.js"></script>
+  <script src="firebaseConfig.js"></script>
 </head>
 <body>
   <div class="overlay"></div>
@@ -147,6 +222,8 @@
     <div class="social-login">
       <div class="social-btn" onclick="googleLogin()">Google</div>
       <div class="social-btn" onclick="facebookLogin()">Facebook</div>
+      <div class="social-btn" onclick="githubLogin()">GitHub</div>
+
     </div>
 
     <p style="margin-top:1rem; font-size:0.9rem; text-align:center;">

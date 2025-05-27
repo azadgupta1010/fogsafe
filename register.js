@@ -78,6 +78,44 @@
           window.location.href = "vehicleInput.html";
         }, 1500);
         
+
+        function googleLogin() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  firebase.auth().signInWithPopup(provider)
+    .then(result => {
+      alert("Google sign-in successful!");
+      window.location.href = "home.html"; // Change to your homepage
+    })
+    .catch(error => {
+      alert("Google sign-in failed: " + error.message);
+    });
+}
+
+// Facebook Sign In
+function facebookLogin() {
+  const provider = new firebase.auth.FacebookAuthProvider();
+  firebase.auth().signInWithPopup(provider)
+    .then(result => {
+      alert("Facebook sign-in successful!");
+      window.location.href = "home.html"; // Change to your homepage
+    })
+    .catch(error => {
+      alert("Facebook sign-in failed: " + error.message);
+    });
+}
+
+// GitHub Login
+function githubLogin() {
+  const provider = new firebase.auth.GithubAuthProvider();
+  firebase.auth().signInWithPopup(provider)
+    .then(result => {
+      alert("GitHub sign-in successful!");
+      window.location.href = "home.html"; // Change to your desired page
+    })
+    .catch(error => {
+      alert("GitHub sign-in failed: " + error.message);
+    });
+}
       } catch (error) {
         document.getElementById('generalError').textContent = error.message;
         document.getElementById('generalError').style.display = 'block';

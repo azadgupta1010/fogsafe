@@ -175,6 +175,10 @@
       max-height: 60px;
     }
   }
+  #vehicleNumber {
+  text-transform: uppercase;
+}
+
 
 
   </style>
@@ -189,8 +193,15 @@
 
   <div class="form-container">
     <h2>Vehicle Information</h2>
-    <input type="text" id="vehicleNumber" placeholder="Vehicle Number (HR 35 V 8754)" required>
-
+   <form onsubmit="return validateVehicleNumber()">
+    <input 
+      type="text" 
+      id="vehicleNumber" 
+      placeholder="Vehicle Number (HR 35 V 8754)" 
+      pattern="^[A-Z]{2}\s\d{2}\s[A-Z]{1}\s\d{4}$" 
+      title="Format: HR 35 V 8754" 
+      required
+    >
     <div class="vehicle-grid" id="vehicleGrid">
       <div class="vehicle-card" onclick="selectVehicle('car', this)">
         <img src="car.png" alt="Car">

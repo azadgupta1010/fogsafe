@@ -9,10 +9,10 @@ document.getElementById('toggleCameraBtn').addEventListener('click', () => {
     video.style.display = 'block';
     video.style.transform = 'scaleX(-1)';
     startDrowsyDetection();
-    document.getElementById('toggleCameraBtn').textContent = 'Stop Driver Camera';
+    document.getElementById('toggleCameraBtn').textContent = 'stop';
   } else {
     stopDrowsyDetection(video);
-    document.getElementById('toggleCameraBtn').textContent = 'Start Driver Camera';
+    document.getElementById('toggleCameraBtn').textContent = 'start';
   }
 
   isCameraOn = !isCameraOn;

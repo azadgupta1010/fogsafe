@@ -143,7 +143,20 @@ firebase.auth().onAuthStateChanged(user => {
       document.getElementById("splashScreen").style.display = "none";
     }, 7000); // 7 seconds
 
-    
+    // toggale 
+function toggleControls() {
+  const container = document.getElementById("controlContainer");
+  container.classList.toggle("show");
+}
+
+// Optional: Example functions
+function petrolPump() { alert("Petrol Pump Clicked"); }
+function evcharger() { alert("EV Charger Clicked"); }
+function refreshPage() { location.reload(); }
+function toggleBreakdown() { alert("Breakdown Toggle"); }
+function handleEmergency() { alert("SOS Sent!"); }
+window.toggleControls=toggleControls;
+
 
   function initializeMap(location) {
       map = new google.maps.Map(document.getElementById("map"), {

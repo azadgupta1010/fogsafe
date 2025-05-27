@@ -22,7 +22,15 @@
 <body>
   <!-- Button to toggle the camera -->
 
-<button class="user-detail-btn" onclick="window.location.href='UserDetailPage.html'">👤</button>
+<button class="user-detail-btn" onclick="window.location.href='UserDetailPage.html'"><svg xmlns="http://www.w3.org/2000/svg" 
+     width="24" height="24" 
+     viewBox="0 0 24 24" 
+     fill="none" stroke="white" 
+     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+  <circle cx="12" cy="7" r="4"/>
+</svg>
+</button>
 <!-- Video feed -->
 <video id="driverCam" width="320" height="240" autoplay muted playsinline style="display: none;"></video>
 
@@ -35,7 +43,15 @@
 <audio id="drowsyBeep" src="beep.mp3" preload="auto"></audio>
 
 <!-- Toggle Button -->
-<button id="toggleCameraBtn">Start Driver Camera</button>
+<button id="toggleCameraBtn"><svg xmlns="http://www.w3.org/2000/svg" 
+     width="24" height="24" 
+     viewBox="0 0 24 24" 
+     fill="none" stroke="white" 
+     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="2" y="6" width="15" height="12" rx="2" ry="2"/>
+  <polygon points="17 10 22 7 22 17 17 14"/>
+</svg>
+</button>
 
 
   <div class="loading-screen" id="loadingScreen">
@@ -46,15 +62,15 @@
   <div id="map"></div>
   <div id="alertBox">⚠️ WARNING: Another vehicle is within 1 KM!</div>
  
- <!-- Floating Controls Toggle Button -->
-<button id="controlsToggleBtn">☰</button>
-
+ 
   <div class="floating-cards">
-    <div class="card" id="speedCard">Speed: 0 km/h</div>
-    <div class="card" id="coordCard">Lat: 0, Lng: 0</div>
-    <div class="card" id="nearbyCard">Nearby Vehicles: 0</div>
-  </div>
-  <div class="floating-controls">
+     <!--<div class="card" id="coordCard">Lat: 0, Lng: 0</div>-->
+   
+  <div class="card" id="speedCard">0 km/h</div>
+  <div class="card" id="nearbyCard">0 cars</div>
+</div>
+</div>
+  <!--<div class="floating-controls">
     <div class="control-btn" onclick="petrolPump()">⛽</div>
     <div class="control-btn" onclick="evcharger()">🔌</div>
     <div class="control-btn" onclick="refreshPage()">🔄</div>
@@ -62,11 +78,101 @@
     <div class="control-btn" id="breakdownBtn" onclick="toggleBreakdown()">🛠️</div>
     <div class="control-btn" onclick="handleEmergency()">sos</div>
 
-  </div>
+  </div>-->
+<div class="floating-controls">
+  <!-- Hidden buttons -->
+  <div class="control-container" id="controlContainer">
+  <div class="control-btn" onclick="petrolPump()" title="Petrol Pump">
+  <!-- Fuel Pump SVG -->
+ <svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="32"
+  height="32"
+  viewBox="0 0 64 64"
+  fill="none"
+  stroke="white"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <!-- Pump body -->
+  <rect x="14" y="12" width="24" height="40" rx="4" ry="4" />
+  
+  <!-- Pump display -->
+  <rect x="20" y="18" width="12" height="8" />
+  
+  <!-- Hose -->
+  <path d="M38 18 h10 v20 h-4" />
+  
+  <!-- Nozzle -->
+  <rect x="44" y="38" width="6" height="4" />
+  
+  <!-- Pump base -->
+  <rect x="10" y="52" width="32" height="6" />
+</svg>
+
+</div>
+
+
+    <!--<div class="control-btn" onclick="refreshPage()">🔄</div>-->
+<div class="control-btn" onclick="evcharger()">
+  <svg width="32" height="32" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" stroke-width="2">
+    <rect x="10" y="8" width="24" height="48" rx="2" ry="2" fill="none" />
+    <rect x="14" y="12" width="16" height="12" rx="1" ry="1" fill="none" />
+    <polyline points="22,28 18,36 24,36 20,44" fill="none" />
+    <path d="M34 24 v18 a6 6 0 0 0 6 6 h4 a4 4 0 0 0 4 -4 v-10 a2 2 0 0 0 -2 -2 h-2" />
+    <path d="M46 18 v-4 m-4 4 v-4" stroke-linecap="round" />
+    <line x1="44" y1="18" x2="44" y2="28" />
+    <path d="M44 28 q0 2 -2 2 h-4" />
+  </svg>
+</div>
+
+<div class="control-btn" onclick="toggleBreakdown()">
+  <svg width="32" height="32" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2">
+    <rect x="10" y="30" width="44" height="18" rx="3" ry="3" fill="#ccc" stroke="#333"/>
+    <polygon points="18,30 24,20 40,20 46,30" fill="#ccc" stroke="#333"/>
+    <circle cx="18" cy="50" r="4" fill="#000"/>
+    <circle cx="46" cy="50" r="4" fill="#000"/>
+    <polygon points="52,12 60,28 44,28" fill="yellow" stroke="orange"/>
+    <line x1="52" y1="16" x2="52" y2="22" stroke="black" stroke-width="2"/>
+    <circle cx="52" cy="25" r="1.5" fill="black"/>
+  </svg>
+</div>
+
+<div class="control-btn" onclick="handleEmergency()">
+  <svg width="32" height="32" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="32" cy="32" r="28" fill="red" stroke="darkred" stroke-width="4" />
+    <text x="32" y="40" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white" text-anchor="middle">
+      SOS
+    </text>
+  </svg>
+
+</div>
+  
+
+</div>
+
+  <!-- Main toggle always at the bottom -->
+<div class="control-toggle" onclick="toggleControls()" title="Controls">
+  <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="#fff" viewBox="0 0 24 24">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10
+             10-4.48 10-10S17.52 2 12 2zm1 17.93c-2.83.48-5.66-.8-7.07-3.19l2.85-1.67
+             c.52.88 1.39 1.49 2.39 1.66v3.2zM4.24 15c-.31-.88-.48-1.82-.48-2.78
+             0-.96.17-1.9.48-2.78l2.85 1.67c-.11.34-.18.7-.18 1.11s.07.76.18 1.11L4.24 15zm7.76 4.93v-3.2c1-.17
+             1.87-.78 2.39-1.66l2.85 1.67c-1.41 2.39-4.24 3.67-7.07 3.19zM15.71
+             14.85c.11-.34.18-.7.18-1.11s-.07-.76-.18-1.11l2.85-1.67c.31.88.48
+             1.82.48 2.78 0 .96-.17 1.9-.48 2.78l-2.85-1.67zM12 8c-2.21 0-4 1.79-4
+             4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0-5.93c2.83-.48 5.66.8 7.07
+             3.19l-2.85 1.67c-.52-.88-1.39-1.49-2.39-1.66V2.07zM19.76 9l-2.85
+             1.67c.11.34.18.7.18 1.11s-.07.76-.18 1.11L19.76 15c.31-.88.48-1.82.48-2.78
+             0-.96-.17-1.9-.48-2.78zM12 5.07v3.2c-1 .17-1.87.78-2.39 1.66L6.76
+             8.27C8.17 5.88 10.99 4.6 12 5.07z"/>
+  </svg>
+</div>
 
 
 
-  <audio id="alertSound" src="beep2.mp3" preload="auto"></audio>
+g preload="auto"></audio>
 
   <!-- Load Google Maps API first -->
   <script async defer 

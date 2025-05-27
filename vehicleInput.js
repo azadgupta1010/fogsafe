@@ -13,6 +13,19 @@
 
 
 
+    function validateVehicleNumber() {
+    const vehicleInput = document.getElementById("vehicleNumber").value.trim();
+    const regex = /^[A-Z]{2}\s\d{2}\s[A-Z]{1}\s\d{4}$/;
+
+    if (!regex.test(vehicleInput)) {
+      alert("Please enter the vehicle number in the correct format: HR 35 V 8754");
+      return false;
+    }
+
+    return true;
+  }
+
+
     function submitVehicleInfo() {
       const number = document.getElementById('vehicleNumber').value.trim();
 
@@ -26,6 +39,7 @@
 
       window.location.href = "index.html";
     }
+
   
     
    
