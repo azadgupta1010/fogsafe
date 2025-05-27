@@ -1,7 +1,7 @@
 // Main authentication check wrapper
 firebase.auth().onAuthStateChanged(user => {
   if (!user) {
-      window.location.href = "login.html";
+      window.location.href = "splash.html";
       return;
   }
 
