@@ -37,7 +37,7 @@
       localStorage.setItem('vehicleNumber', number);
       localStorage.setItem('vehicleType', selectedType);
 
-      window.location.href = "index.html";
+      window.location.href = "splash2.html";
     }
 
   
