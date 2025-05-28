@@ -74,7 +74,7 @@ if (document.getElementById('registerForm')) {
 // Auth State Listener
 auth.onAuthStateChanged(user => {
   if (window.location.pathname.includes('vehicleInput.html') || 
-     window.location.pathname.includes('splash2.html')) {
+     window.location.pathname.includes('index.html')) {
     if (!user) window.location.href = 'login.html';
   }
 });
