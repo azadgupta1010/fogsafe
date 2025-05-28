@@ -113,7 +113,7 @@ function submitFeedback() {
 
   function logout() {
    
-    window.location.href = "register.html";
+    window.location.href = "splash.html";
   }
 
   function updateProfilePic(event) {
