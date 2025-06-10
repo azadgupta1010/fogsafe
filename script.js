@@ -255,7 +255,7 @@ window.toggleControls=toggleControls;
                   const distance = getDistance(myLocation, data.location);
                   updateVehicleMarker(child.key, data, distance);
                   
-                  if (distance < 1){
+                  if (distance < 200){
                      nearby = true;
 
                   if (data.breakdown) {
@@ -320,7 +320,6 @@ window.toggleControls=toggleControls;
         alertSound.currentTime = 0;
     }
  };
-
 
   const getDistance = (loc1, loc2) => {
       const toRad = x => x * Math.PI / 180;
